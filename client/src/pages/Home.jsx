@@ -1,498 +1,157 @@
-
-import React, { useState, useEffect } from 'react';
-
-import { FaClock } from 'react-icons/fa';
+import React from 'react';
 import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Grid,
-  GridItem,
-  Checkbox,
-  Select,
-  Input,
-  Button,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Spinner,
-  Tooltip,
-  useToast,
+  Box, Heading, SimpleGrid, Image, Button, Table, Thead, Tbody, Tr, Th, Td,
+  VStack, Text, Container, useColorModeValue, Flex, HStack
 } from '@chakra-ui/react';
-import { FaCalendarAlt} from 'react-icons/fa';
-import { Pie } from 'react-chartjs-2';
-import { Chart, ArcElement, Tooltip as ChartTooltip } from 'chart.js';
-
-
-Chart.register(ArcElement, ChartTooltip);
-
-const Calendar = () => {
-  const [calendarData, setCalendarData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch calendar data from API or generate mock data
-  const fetchCalendarData = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setCalendarData([
-        { date: '2023-06-01', solved: true },
-        { date: '2023-06-02', solved: false },
-        { date: '2023-06-03', solved: true },
-        // Add more calendar data here
-      ]);
-    } catch (error) {
-      console.error('Error fetching calendar data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchCalendarData();
-  }, []);
-
-  return (
-   
-    <Box>
-      <Flex align="center" mb={2}>
-        <FaCalendarAlt />
-        <Heading size="sm" ml={2}>
-          Calendar
-        </Heading>
-      </Flex>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <Grid templateColumns="repeat(7, 1fr)" gap={1}>
-          {calendarData.map((day) => (
-            <GridItem
-              key={day.date}
-              bg={day.solved ? 'green.500' : 'white'}
-              color={day.solved ? 'white' : 'gray.500'}
-              p={1}
-              borderRadius="md"
-              fontSize="sm"
-            >
-              {new Date(day.date).getDate()}
-            </GridItem>
-          ))}
-        </Grid>
-      )}
-    </Box>
-  );
-};
-
-const StreakStats = () => {
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [maxStreak, setMaxStreak] = useState(0);
-  const [globalLongestStreak, setGlobalLongestStreak] = useState(0);
-  const [userLongestStreak, setUserLongestStreak] = useState(0);
-
-  // Fetch streak data from API or generate mock data
-  const fetchStreakData = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setCurrentStreak(3);
-      setMaxStreak(7);
-      setGlobalLongestStreak(120);
-      setUserLongestStreak(25);
-    } catch (error) {
-      console.error('Error fetching streak data:', error);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchStreakData();
-  }, []);
-
-  return (
-    <Box mt={4}>
-      <Flex align="center" mb={2}>
-        <Heading size="sm">Streak Stats</Heading>
-      </Flex>
-      <Box bg="gray.100" p={4} borderRadius="md">
-        <Text>
-          Current Streak: <strong>{currentStreak}</strong>
-        </Text>
-        <Text>
-          Max Streak: <strong>{maxStreak}</strong>
-        </Text>
-      </Box>
-      <Box mt={4}>
-        <Flex>
-          <Box bg="gray.100" p={4} borderRadius="md" mr={2}>
-            <Text>Global Longest Streak:</Text>
-            <Heading size="md">{globalLongestStreak}</Heading>
-          </Box>
-          <Box bg="gray.100" p={4} borderRadius="md">
-            <Text>Your Longest Streak:</Text>
-            <Heading size="md">{userLongestStreak}</Heading>
-          </Box>
-        </Flex>
-      </Box>
-    </Box>
-   
-  );
-};
-
-const ProblemStats = () => {
-  const [problemsSolved, setProblemsSolved] = useState(0);
-  const [problemsAttempted, setProblemsAttempted] = useState(0);
-
-  // Fetch problem stats data from API or generate mock data
-  const fetchProblemStats = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setProblemsSolved(150);
-      setProblemsAttempted(250);
-    } catch (error) {
-      console.error('Error fetching problem stats:', error);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchProblemStats();
-  }, []);
-
-  return (
-    <Box mt={4}>
-      <Flex align="center" mb={2}>
-        <Heading size="sm">Problem Stats</Heading>
-      </Flex>
-      <Box bg="gray.100" p={4} borderRadius="md">
-        <Text>
-          Problems Solved: <strong>{problemsSolved}</strong>
-        </Text>
-        <Text>
-          Problems Attempted: <strong>{problemsAttempted}</strong>
-        </Text>
-      </Box>
-    </Box>
-  );
-};
-
-const ProblemDifficultyChart = () => {
-  const [chartData, setChartData] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  // Fetch problem difficulty data from API or generate mock data
-  const fetchProblemDifficultyData = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setChartData({
-        labels: ['Easy', 'Medium', 'Hard'],
-        datasets: [
-          {
-            data: [80, 50, 20],
-            backgroundColor: ['#4caf50', '#ffc107', '#f44336'],
-          },
-        ],
-      });
-    } catch (error) {
-      console.error('Error fetching problem difficulty data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchProblemDifficultyData();
-  }, []);
-
-  return (
-    <Box mt={4}>
-      <Flex align="center" mb={2}>
-        <Heading size="sm">Problem Difficulty</Heading>
-      </Flex>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <Pie data={chartData} options={{ maintainAspectRatio: false }} />
-      )}
-    </Box>
-  );
-};
-
-const CodingTip = () => {
-  const [tip, setTip] = useState('');
-  const toast = useToast();
-
-  // Fetch coding tip from API or generate mock data
-  const fetchCodingTip = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setTip(
-        "Always write clean and readable code. Remember, code is read more often than it's written."
-      );
-    } catch (error) {
-      console.error('Error fetching coding tip:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch coding tip',
-        status: 'error',
-        duration:5000,
-        isClosable: true,
-      });
-    }
-  };
-
-  React.useEffect(() => {
-    fetchCodingTip();
-  }, []);
-
-  return (
-    <Box bg="gray.100" p={4} borderRadius="md">
-      <Heading size="sm" mb={2}>
-        Coding Tip of the Day
-      </Heading>
-      <Text>{tip}</Text>
-    </Box>
-  );
-};
-
-
-
-
-const ProblemOfTheDay = () => {
-  const [problem, setProblem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [timeRemaining, setTimeRemaining] = useState(86400); // 24 hours in seconds
-
-  // Fetch problem of the day from API or generate mock data
-  const fetchProblemOfTheDay = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setProblem({
-        title: 'Two Sum',
-        difficulty: 'Easy',
-        timeToComplete: '1 hour',
-        tag: 'Array',
-      });
-    } catch (error) {
-      console.error('Error fetching problem of the day:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProblemOfTheDay();
-    const timer = setInterval(() => {
-      setTimeRemaining((prevTime) => prevTime - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (timeInSeconds) => {
-    const hours = Math.floor(timeInSeconds / 3600);
-    const minutes = Math.floor((timeInSeconds % 3600) / 60);
-    const seconds = timeInSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  return (
-    <Box bg="gray.100" p={4} borderRadius="md" mt={4}>
-      <Heading size="sm" mb={2}>
-        Problem of the Day
-      </Heading>
-      <Flex justify="space-between" align="center" mb={4}>
-        <Heading size="md">
-          <FaClock /> {formatTime(timeRemaining)}
-        </Heading>
-      </Flex>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <Box bg="white" p={4} borderRadius="md">
-          <Heading size="md" mb={2}>
-            {problem.title}
-          </Heading>
-          <Text mb={2}>
-            <strong>Difficulty:</strong> {problem.difficulty}
-          </Text>
-          <Text mb={2}>
-            <strong>Tag:</strong> {problem.tag}
-          </Text>
-          <Flex justify="flex-end">
-            <Button colorScheme="green">Solve</Button>
-          </Flex>
-        </Box>
-      )}
-    </Box>
-  );
-};
-
-
-
-const PracticeProblems = () => {
-  const [problems, setProblems] = useState([]);
-  const [difficulty, setDifficulty] = useState('');
-  const [status, setStatus] = useState('');
-  const [topic, setTopic] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  // Fetch practice problems from API or generate mock data
-  const fetchPracticeProblems = async () => {
-    try {
-      // Simulating API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setProblems([
-        {
-          id: 1,
-          title: 'Two Sum',
-          solution: 'https://example.com/solution/1',
-          acceptance: '48.7%',
-          difficulty: 'Easy',
-          status: 'Solved',
-          topic: 'Array',
-        },
-        // Add more practice problems here
-      ]);
-    } catch (error) {
-      console.error('Error fetching practice problems:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDifficultyChange = (e) => {
-    setDifficulty(e.target.value);
-  };
-
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-  };
-
-  const handleTopicChange = (e) => {
-    setTopic(e.target.value);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleShuffle = () => {
-    // Implement logic to shuffle the problems array
-  };
-
-  React.useEffect(() => {
-    fetchPracticeProblems();
-  }, []);
-
-  return (
-    <Box mt={4}>
-      <Heading size="md" mb={4}>
-        Practice Problems
-      </Heading>
-      <Flex mb={4}>
-        <Select
-          placeholder="Difficulty"
-          value={difficulty}
-          onChange={handleDifficultyChange}
-          mr={2}
-        >
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </Select>
-        <Select
-          placeholder="Status"
-          value={status}
-          onChange={handleStatusChange}
-          mr={2}
-        >
-          <option value="solved">Solved</option>
-          <option value="attempted">Attempted</option>
-          <option value="not-visited">Not Visited</option>
-        </Select>
-        <Select
-          placeholder="Topic"
-          value={topic}
-          onChange={handleTopicChange}
-          mr={2}
-        >
-          <option value="array">Array</option>
-          <option value="string">String</option>
-          <option value="linked-list">Linked List</option>
-          {/* Add more topics here */}
-        </Select>
-        <Input
-          placeholder="Search"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          mr={2}
-        />
-        
-      </Flex>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Status</Th>
-                <Th>Title</Th>
-                <Th>Solution</Th>
-                <Th>Acceptance</Th>
-                <Th>Difficulty</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {problems.map((problem) => (
-                <Tr key={problem.id}>
-                  <Td>
-                    <Checkbox isChecked={problem.status === 'Solved'} />
-                  </Td>
-                  <Td>{problem.title}</Td>
-                  <Td>
-                    <Tooltip label="View Solution">
-                      <a href={problem.solution} target="_blank" rel="noopener noreferrer">
-                        Solution
-                      </a>
-                    </Tooltip>
-                  </Td>
-                  <Td>{problem.acceptance}</Td>
-                  <Td>{problem.difficulty}</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-          <Flex justify="space-between" mt={4}>
-            <Button>Previous</Button>
-            <Button>Next</Button>
-          </Flex>
-        </>
-      )}
-    </Box>
-  );
-};
+import { toast } from 'react-toastify';
+import Navbar from '../Components/Navbar';
+import { LockIcon } from '@chakra-ui/icons';
+// Import your images
+import interviewImage from '../assets/back1.jpg';
+import dpImage from '../assets/back9.jpg';
+import amazonImage from '../assets/back3.jpg';
+import amazon from '../assets/back7.jpg';
+import googleImage from '../assets/back4.jpg';
+import google from '../assets/back8.webp';
+import top150 from '../assets/back5.jpg';
+import dp from '../assets/back6.png';
 
 export const Home = () => {
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+  const boxBgColor = useColorModeValue('white', 'gray.700');
+
+  const handleStartSolving = (plan) => {
+    toast.info(`Starting ${plan}`);
+  };
+
+  const handleRegister = (contest) => {
+    toast.success(`Registered for ${contest}`);
+  };
+
+  const handleUnlock = (assignment) => {
+    toast.info(`Unlocking ${assignment}`);
+  };
+
   return (
-    <Flex>
-      <Box flex="0.3" pr={4}>
-        <Calendar />
-        <StreakStats />
-        <ProblemStats />
-        <ProblemDifficultyChart />
+    <>
+      <Navbar/>
+    
+      <Box bg={bgColor} minH="100vh" py={8}>
+        <Container maxW="container.xl">
+          <Heading textAlign="center" mb={8} fontSize="3xl" fontWeight="bold">
+            Featured Plans
+          </Heading>
+
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={12}>
+            {[
+              { title: 'Top 150 Interview Questions', image: top150 },
+              { title: 'Master Dynamic Programming', image: dp },
+              { title: "Amazon's Most Frequent Questions", image: amazon },
+              { title: "Google's Most Frequent Questions", image: google },
+            ].map((plan, index) => (
+              <Box
+                key={index}
+                borderRadius="lg"
+                overflow="hidden"
+                boxShadow="md"
+                bg={boxBgColor}
+              >
+                <Flex p={4}>
+                  <Image src={plan.image} alt={plan.title} boxSize="80px" objectFit="cover" mr={4} />
+                  <VStack align="stretch" spacing={3} flex={1}>
+                    <Text fontWeight="bold" fontSize="lg">{plan.title}</Text>
+                    <Button colorScheme="teal" onClick={() => handleStartSolving(plan.title)}>
+                      Start Solving
+                    </Button>
+                  </VStack>
+                </Flex>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <Heading textAlign="center" mb={6} fontSize="2xl">
+            Upcoming Contests
+          </Heading>
+
+          <Box overflowX="auto" mb={6}>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Contest Name</Th>
+                  <Th>Date</Th>
+                  <Th>Time</Th>
+                  <Th>Register</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {[
+                  { name: 'Weekly Contest 1', date: '2023-07-01', time: '20:00 UTC' },
+                  { name: 'Biweekly Contest 1', date: '2023-07-08', time: '14:00 UTC' },
+                  { name: 'Special Contest', date: '2023-07-15', time: '18:00 UTC' },
+                ].map((contest, index) => (
+                  <Tr key={index}>
+                    <Td>{contest.name}</Td>
+                    <Td>{contest.date}</Td>
+                    <Td>{contest.time}</Td>
+                    <Td>
+                      <Button 
+                        size="sm" 
+                        colorScheme="green" 
+                        onClick={() => handleRegister(contest.name)}
+                        _hover={{ bg: 'green.600' }}
+                      >
+                        Register
+                      </Button>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </Box>
+
+          <Box textAlign="center" mb={12}>
+            <Button colorScheme="blue">View All</Button>
+          </Box>
+
+          <Heading textAlign="center" mb={6} fontSize="2xl">
+            Assignments
+          </Heading>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
+            {[
+              { name: 'Assignment 1', streak: 7, image: interviewImage },
+              { name: 'Assignment 2', streak: 14, image: dpImage },
+              { name: 'Assignment 3', streak: 21, image: amazonImage },
+            ].map((assignment, index) => (
+              <Box
+                key={index}
+                borderRadius="lg"
+                p={6}
+                boxShadow="md"
+                bg={boxBgColor}
+                textAlign="center"
+                backgroundImage={`url(${assignment.image})`}
+                backgroundSize="cover"
+                backgroundPosition="center"
+              >
+                <Heading size="md" mb={4}>{assignment.name}</Heading>
+                <Text mb={4}>Unlock by maintaining a continuous streak of {assignment.streak}</Text>
+                <Button 
+                  colorScheme="green" 
+                  onClick={() => handleUnlock(assignment.name)}
+                  leftIcon={<LockIcon />}
+                >
+                  Unlock Now
+                </Button>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <Box textAlign="center">
+            <Button colorScheme="blue">View All Offers</Button>
+          </Box>
+        </Container>
       </Box>
-      <Box flex="0.7">
-        <CodingTip />
-        <ProblemOfTheDay />
-        <PracticeProblems />
-      </Box>
-    </Flex>
+    </>
   );
 };

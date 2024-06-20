@@ -9,9 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import signupImage from './signup-background.jpg';
-import logo from '../assets/logo.png';
+import logo from '../assets/image.png';
 
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://localhost:2000';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -95,6 +95,10 @@ export const Login = () => {
     }
   };
 
+  const loginwithgoogle=()=>{
+    window.open("http://localhost:2000/auth/google/callback", "_self");
+  }
+
   return (
     <>
       <Flex h="90vh" align="center" justify="center">
@@ -104,7 +108,7 @@ export const Login = () => {
               <Flex justify="center" mb={6}>
                 <Image src={logo} alt="Logo" boxSize="50px" />
                 <Text fontSize="3xl" fontWeight="bold" ml={3}>
-                  Algobug
+                  AlgoBug
                 </Text>
               </Flex>
               <form onSubmit={handleSubmit}>
@@ -144,7 +148,7 @@ export const Login = () => {
                 <VStack>
                     <Text mb={2}>Or sign up with</Text>
                     <HStack spacing={4}>
-                      <IconButton aria-label="Google" icon={<FcGoogle fontSize="24px" />} />
+                      <IconButton aria-label="Google" icon={<FcGoogle fontSize="24px" />} onClick={loginwithgoogle}/>
                       <IconButton aria-label="GitHub" icon={<FaGithub fontSize="24px" />} />
                       <IconButton aria-label="LinkedIn" icon={<FaLinkedin fontSize="24px" />} />
                     </HStack>

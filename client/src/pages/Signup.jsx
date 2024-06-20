@@ -10,8 +10,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import signupImage from './signup-background.jpg';
-import logo from '../assets/logo.png';
-axios.defaults.baseURL = 'http://localhost:3000';
+import logo from '../assets/image.png';
+axios.defaults.baseURL = 'http://localhost:2000';
 export const Signup = () => {
   const [formData, setFormData] = useState({
     fullName: '',

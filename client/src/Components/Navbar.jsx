@@ -1,121 +1,111 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Box,
-  Flex,
-  Heading,
-  Spacer,
-  IconButton,
-  Tooltip,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Input,
-  InputGroup,
-  InputLeftElement,
+  Box, Flex, Text, Input, IconButton, Button, Image, HStack, Circle,
+  Popover, PopoverTrigger, PopoverContent, PopoverBody,
+  useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
-import { FaFireAlt, FaBell, FaPowerOff, FaSearch } from 'react-icons/fa';
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
+import { FaFire } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function Navbar() {
+import logo from '../assets/image.png'; // Make sure to update this path
+
+const dsaTopics = [
+  'Arrays', 'Linked Lists', 'Stacks', 'Queues', 'Trees',
+  'Graphs', 'Sorting', 'Searching', 'Dynamic Programming', 'Greedy Algorithms'
+];
+
+ const Navbar = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.600', 'white');
+
+  const handleSearch = () => {
+    const results = dsaTopics.filter(topic => 
+      topic.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (results.length > 0) {
+      toast.success(`Found ${results.length} matching topics!`);
+    } else {
+      toast.info('No matching topics found.');
+    }
+  };
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    toast.info('Logged out successfully!');
+  };
+
   return (
-    <Box py={4} px={6} borderBottom="1px" borderColor="gray.200">
-      <Flex alignItems="center">
-        <Heading size="md" color="brand.500" fontFamily="heading">
-          Logo
-        </Heading>
-        <Flex ml={8} display={{ base: 'none', md: 'flex' }}>
-          <Box
-            mr={10}
-            color="gray.600"
-            _hover={{ color: 'brand.500', cursor: 'pointer' }}
-            fontFamily="navLink"
-            fontSize="lg"
-          >
-            Problems
-          </Box>
-          <Box
-            mr={10}
-            color="gray.600"
-            _hover={{ color: 'brand.500', cursor: 'pointer' }}
-            fontFamily="navLink"
-            fontSize="lg"
-          >
-            Contest
-          </Box>
-          <Box
-            mr={10}
-            color="gray.600"
-            _hover={{ color: 'brand.500', cursor: 'pointer' }}
-            fontFamily="navLink"
-            fontSize="lg"
-          >
-            Discuss
-          </Box>
-          <Box
-            mr={10}
-            color="gray.600"
-            _hover={{ color: 'brand.500', cursor: 'pointer' }}
-            fontFamily="navLink"
-            fontSize="lg"
-          >
-            Leaderboard
-          </Box>
-        </Flex>
-        <Spacer />
-        <InputGroup mr={4} maxW="200px">
-          <InputLeftElement pointerEvents="none" children={<FaSearch color="gray.300" />} />
-          <Input type="text" placeholder="Search" focusBorderColor="brand.500" />
-        </InputGroup>
-        <Tooltip label="Streak">
+    <Box bg={bgColor} px={4} boxShadow="sm">
+      <Flex h={16} alignItems="center" justifyContent="space-between">
+        <HStack spacing={4} flex={1}>
+          <Circle size="40px" bg="teal.500" color="white">
+            <Image src={logo} alt="Logo" boxSize="30px" />
+          </Circle>
+          <Text fontSize={["xl", "2xl"]} fontWeight="bold" color="teal.500" display={["none", "block"]}>
+            AlgoBug
+          </Text>
+          <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
+            <PopoverTrigger>
+              <Input
+                placeholder="Search DSA topics"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={onOpen}
+                width={["100%", "200px", "300px"]}
+              />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverBody>
+                <Box maxH="200px" overflowY="auto">
+                  {dsaTopics
+                    .filter(topic => topic.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .map(topic => (
+                      <Button key={topic} variant="ghost" justifyContent="start" width="100%">
+                        {topic}
+                      </Button>
+                    ))
+                  }
+                </Box>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
           <IconButton
-            icon={<FaFireAlt />}
-            variant="ghost"
-            aria-label="Streak"
-            mr={2}
-            _hover={{ bg: 'brand.500', color: 'white' }}
+            aria-label="Search database"
+            icon={<SearchIcon />}
+            onClick={handleSearch}
+            size="sm"
           />
-        </Tooltip>
-        <Tooltip label="Notifications">
-          <IconButton
-            icon={<FaBell />}
-            variant="ghost"
-            aria-label="Notifications"
-            mr={4}
-            _hover={{ bg: 'brand.500', color: 'white' }}
-          />
-        </Tooltip>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            icon={<HamburgerIcon />}
-            variant="ghost"
-            _hover={{ bg: 'brand.500', color: 'white' }}
-          />
-          <MenuList>
-            <MenuItem _hover={{ bg: 'brand.500', color: 'white' }} fontFamily="navLink" fontSize="lg">
-              Problems
-            </MenuItem>
-            <MenuItem _hover={{ bg: 'brand.500', color: 'white' }} fontFamily="navLink" fontSize="lg">
-              Contest
-            </MenuItem>
-            <MenuItem _hover={{ bg: 'brand.500', color: 'white' }} fontFamily="navLink" fontSize="lg">
-              Discuss
-            </MenuItem>
-            <MenuItem _hover={{ bg: 'brand.500', color: 'white' }} fontFamily="navLink" fontSize="lg">
-              Leaderboard
-            </MenuItem>
-          </MenuList>
-        </Menu>
-        <Tooltip label="Logout">
-          <IconButton
-            icon={<FaPowerOff />}
-            variant="ghost"
-            aria-label="Logout"
-            _hover={{ bg: 'brand.500', color: 'white' }}
-          />
-        </Tooltip>
+        </HStack>
+
+        <HStack spacing={[2, 4]} flex={1} justifyContent="center">
+          <Button variant="ghost" size={["sm", "md"]}>Dashboard</Button>
+          <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
+          <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Weekly Assignments</Button>
+          <Button variant="ghost" size={["sm", "md"]}>Contests</Button>
+        </HStack>
+
+        <HStack spacing={4} flex={1} justifyContent="flex-end">
+          <HStack>
+            <FaFire color="orange" />
+            <Text fontWeight="bold" display={["none", "block"]}>5</Text> {/* Replace with actual streak count */}
+          </HStack>
+          <Button
+           
+            colorScheme="teal"
+            variant="solid"
+            onClick={handleLogout}
+            size={["sm", "md"]}
+          >
+            Logout
+          </Button>
+        </HStack>
       </Flex>
     </Box>
   );
-}
+};
+
+export default Navbar;
