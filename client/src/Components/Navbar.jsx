@@ -87,8 +87,9 @@ const dsaTopics = [
         <Link to="/dashboard">
           <Button variant="ghost" size={["sm", "md"]}>Dashboard</Button>
 </Link>
-
+           <Link to="/userproblems">
           <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
+          </Link>
           <Link to="/assignments">
           <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Assignments</Button>
           </Link>

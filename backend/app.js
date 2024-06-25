@@ -15,7 +15,8 @@ const {generateOTP} = require('./utils/mail');
 const cookieParser = require('cookie-parser');
 const Question = require('./models/Question');
 const TestCase = require('./models/TestCase');
-
+const {generateFile} = require('./generateFile');
+const {executeCpp}=require('./executeCpp');
 app.use(bodyParser.json());
 const cors = require('cors');
 const { mailTransport, generateEmailTemplate, plainEmailTemplate } = require('./utils/mail');
@@ -31,6 +32,8 @@ dotenv.config({
 });
 
 connectDB();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const clientid="10427455581-2ptisuamqtvgmkdacjnf1pgd9tl7dpsd.apps.googleusercontent.com"
 const clientsecret="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"
@@ -529,6 +532,23 @@ app.delete('/problems/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting problem', error: error.message });
   }
 });
+
+app.post('/run',async(req,res)=>{
+  const {language='cpp',code} = req.body
+  if(code===undefined){
+    return res.status(400).json({message:'code is required'})
+  }
+  try{
+   const filePath=await generateFile(language,code)
+   const output=await executeCpp(filePath);
+
+      res.send({filePath})
+  }catch(err){
+   
+    return res.status(500).json({message:'Error'+err.message})
+  }
+  
+})
 
 app.listen(2000, () => {
     console.log('Server is running on port 2000');

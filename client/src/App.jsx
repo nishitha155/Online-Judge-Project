@@ -15,7 +15,8 @@ import { AddQuestion } from './pages/AddQuestion';
 import AllProblems from './pages/AllProblems';
 import AddTestCase from './pages/AddTestCase';
 import UpdateProblem from './pages/UpdateProblem';
-
+import { UserProblems } from './pages/UserProblems';
+import { SingleProblem } from './pages/SingleProblem';
 
 function App() {
 
@@ -36,6 +37,8 @@ function App() {
         <Route path="/password" element={<ChangePassword />} />
         <Route path="/add" element={<AddQuestion />} />
         <Route path="/problems" element={<AllProblems />} />
+        <Route path="/single" element={<SingleProblem />} />
+        <Route path="/userproblems" element={<UserProblems/>} />
         <Route path="/problems/:problemId/add-testcase" element={<AddTestCase />} />
         <Route path="/problems/:problemId/update" element={<UpdateProblem />} />
      
