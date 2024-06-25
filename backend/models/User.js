@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-   googleId:String,
     
-        password: { type: String,  minlength: 6 },
+        password: { type: String },
         email: { type: String, required: true, unique: true,validate: {
       validator: function(v) {
         return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(v);
       },
       message: props => `${props.value} is not a valid email!`
     } },
-        phoneNumber: { type: String},
+       
         fullName: { type: String  },
         userName: { type: String,unique: true,validate: {
       validator: function(v) {
@@ -18,9 +17,22 @@ const userSchema = new mongoose.Schema({
       },
       message: props => `${props.value} is not a valid username! It must be at least 8 characters with one capital letter and one digit.`
     } },
+    verified:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
        
     streak: { type: Number, default: 0 },
-    lastSubmissionDate: { type: Date }
+    lastSubmissionDate: { type: Date },
+    joined: {
+        type: Date,
+        default: Date.now
+    },
+    lastUpdate: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const User = mongoose.model('User', userSchema);

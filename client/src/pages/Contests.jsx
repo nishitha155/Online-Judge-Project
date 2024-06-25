@@ -21,17 +21,17 @@ import { toast } from 'react-toastify';
 import Navbar from '../Components/Navbar';
 
 const upcomingContests = [
-  { id: 1, name: 'Weekly Challenge', date: '2024-07-01', time: '20:00 UTC', registered: 1245 },
-  { id: 2, name: 'Algorithms Marathon', date: '2024-07-15', time: '18:00 UTC', registered: 987 },
-  { id: 3, name: 'Data Structures Bonanza', date: '2024-07-22', time: '19:00 UTC', registered: 1532 },
-  { id: 4, name: 'Coding Sprint', date: '2024-08-05', time: '21:00 UTC', registered: 756 },
+  { id: 1, name: 'Weekly Challenge', date: '2024-07-01', time: '20:00 IST', registered: 1245 },
+  { id: 2, name: 'Algorithms Marathon', date: '2024-07-15', time: '18:00 IST', registered: 987 },
+  { id: 3, name: 'Data Structures Bonanza', date: '2024-07-22', time: '19:00 IST', registered: 1532 },
+  { id: 4, name: 'Coding Sprint', date: '2024-08-05', time: '21:00 IST', registered: 756 },
 ];
 
 const pastContests = [
-  { id: 1, name: 'June Coding Challenge', date: '2024-06-15', time: '19:00 UTC', participants: 2341 },
-  { id: 2, name: 'Spring Algorithms Contest', date: '2024-05-20', time: '18:30 UTC', participants: 1876 },
-  { id: 3, name: 'Data Structures Showdown', date: '2024-04-10', time: '20:00 UTC', participants: 2103 },
-  { id: 4, name: 'March Madness Coding', date: '2024-03-15', time: '19:30 UTC', participants: 1654 },
+  { id: 1, name: 'June Coding Challenge', date: '2024-06-15', time: '19:00 IST', participants: 2341 },
+  { id: 2, name: 'Spring Algorithms Contest', date: '2024-05-20', time: '18:30 IST', participants: 1876 },
+  { id: 3, name: 'Data Structures Showdown', date: '2024-04-10', time: '20:00 IST', participants: 2103 },
+  { id: 4, name: 'March Madness Coding', date: '2024-03-15', time: '19:30 IST', participants: 1654 },
 ];
 
 const ContestTable = ({ contests, isPast }) => {

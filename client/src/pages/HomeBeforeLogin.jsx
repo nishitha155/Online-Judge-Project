@@ -4,7 +4,7 @@ import {
   VStack, Text, Container, useColorModeValue, Flex, HStack
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
-import Navbar from '../Components/Navbar';
+import Header1 from '../Components/Header1';
 import { LockIcon } from '@chakra-ui/icons';
 // Import your images
 import interviewImage from '../assets/back1.jpg';
@@ -16,7 +16,7 @@ import google from '../assets/back8.webp';
 import top150 from '../assets/back5.jpg';
 import dp from '../assets/back6.png';
 
-export const Home = () => {
+export const HomeBeforeLogin = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const boxBgColor = useColorModeValue('white', 'gray.700');
 
@@ -34,7 +34,7 @@ export const Home = () => {
 
   return (
     <>
-      <Navbar/>
+      <Header1/>
     
       <Box bg={bgColor} minH="100vh" py={8}>
         <Container maxW="container.xl">

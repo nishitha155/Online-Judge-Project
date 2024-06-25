@@ -5,10 +5,10 @@ import {
   useColorModeValue, useDisclosure
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
-import { FaFire } from 'react-icons/fa';
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/image.png'; // Make sure to update this path
 
 const dsaTopics = [
@@ -16,11 +16,12 @@ const dsaTopics = [
   'Graphs', 'Sorting', 'Searching', 'Dynamic Programming', 'Greedy Algorithms'
 ];
 
- const Navbar = () => {
+ const Header1 = () => {
+    const navigate = useNavigate(); 
   const [searchTerm, setSearchTerm] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bgColor = useColorModeValue('white', 'gray.800');
-  
+ 
 
   const handleSearch = () => {
     const results = dsaTopics.filter(topic => 
@@ -33,9 +34,11 @@ const dsaTopics = [
     }
   };
 
-  const handleLogout = () => {
-    // Implement logout logic here
-    toast.info('Logged out successfully!');
+  const handleSignup = () => {
+    navigate('/user/signup');
+  };
+  const handleLogin = () => {
+    navigate('/user/login');
   };
 
   return (
@@ -45,11 +48,9 @@ const dsaTopics = [
           <Circle size="40px" bg="teal.500" color="white">
             <Image src={logo} alt="Logo" boxSize="30px" />
           </Circle>
-          <Link to='/home'>
           <Text fontSize={["xl", "2xl"]} fontWeight="bold" color="teal.500" display={["none", "block"]}>
             AlgoBug
           </Text>
-          </Link>
           <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
             <PopoverTrigger>
               <Input
@@ -84,32 +85,31 @@ const dsaTopics = [
         </HStack>
 
         <HStack spacing={[2, 4]} flex={1} justifyContent="center">
-        <Link to="/dashboard">
-          <Button variant="ghost" size={["sm", "md"]}>Dashboard</Button>
-</Link>
-
+          
           <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
-          <Link to="/assignments">
-          <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Assignments</Button>
-          </Link>
-          <Link to="/contest">
+          <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Weekly Assignments</Button>
           <Button variant="ghost" size={["sm", "md"]}>Contests</Button>
-          </Link>
         </HStack>
 
         <HStack spacing={4} flex={1} justifyContent="flex-end">
-          <HStack>
-            <FaFire color="orange" />
-            <Text fontWeight="bold" display={["none", "block"]}>5</Text> {/* Replace with actual streak count */}
-          </HStack>
+          
           <Button
            
             colorScheme="teal"
             variant="solid"
-            onClick={handleLogout}
+            onClick={handleSignup}
             size={["sm", "md"]}
           >
-            Logout
+            SignUp
+          </Button>
+          <Button
+           
+            colorScheme="teal"
+            variant="solid"
+            onClick={handleLogin}
+            size={["sm", "md"]}
+          >
+            Login
           </Button>
         </HStack>
       </Flex>
@@ -117,4 +117,4 @@ const dsaTopics = [
   );
 };
 
-export default Navbar;
+export default Header1;

@@ -1,6 +1,6 @@
-import  { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Flex, Box, Image, Text, Input, Button,  Stack, 
+  Flex, Box, Image, Text, Input, Button, Stack, 
   FormControl, FormLabel, FormErrorMessage, useToast 
 } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
@@ -11,20 +11,56 @@ import Header from '../Components/Header';
 import signupImage from './signup-background.jpg';
 import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Components/Navbar';
+import Cookies from 'js-cookie'
+
+
 axios.defaults.baseURL = 'http://localhost:2000';
-export const Signup = () => {
-  const navigate=useNavigate();
+
+export const Update = () => {
+  const navigate = useNavigate();
+  const authToken = Cookies.get('authToken');
+  const [user, setUser] = useState({});
   const [formData, setFormData] = useState({
     fullName: '',
-    email: '',
-    userName: '',
-    password: '',
-    confirmPassword: '',
+    userName: ''
   });
-
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    if (authToken) {
+      getUserDetails();
+    }
+  }, [authToken]);
+
+  async function getUserDetails() {
+    try {
+      const response = await fetch('http://localhost:2000/userdetails', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        credentials: 'include'
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+  
+      const userDetails = await response.json();
+      setUser(userDetails);
+      setFormData({ fullName: userDetails.fullName, userName: userDetails.userName });
+    } catch (error) {
+      console.error('Error fetching user details:', error.message);
+      toast.error(`Failed to fetch user details: ${error.message}`);
+    }
+  }
+
+  
 
   const validateField = (name, value) => {
     let error = '';
@@ -34,25 +70,9 @@ export const Signup = () => {
           error = 'Full name must be at least 2 characters long';
         }
         break;
-      case 'email':
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          error = 'Invalid email address';
-        }
-        break;
-      
       case 'userName':
         if (!/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(value)) {
           error = 'Username must be at least 8 characters with one capital letter and one digit';
-        }
-        break;
-      case 'password':
-        if (value.length < 6) {
-          error = 'Password must be at least 6 characters long';
-        }
-        break;
-      case 'confirmPassword':
-        if (value !== formData.password) {
-          error = 'Passwords do not match';
         }
         break;
       default:
@@ -67,7 +87,7 @@ export const Signup = () => {
     const error = validateField(name, value);
     setErrors({ ...errors, [name]: error });
 
-    if (name === 'userName' || name === 'email') {
+    if (name === 'userName' ) {
       checkUniqueness(name, value);
     }
   };
@@ -112,20 +132,34 @@ export const Signup = () => {
     }
 
     try {
-      const response = await axios.post('/register', formData);
+      const response = await axios.post('/update', formData, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(user),
+      });
+      
+
+      const result = await response.data;
+      Cookies.remove('authToken'); // Clear the existing cookie
+      Cookies.set('authToken', result.token, { expires: 0.24 });
+      
       toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
+        title: 'Account updated.',
+        description: "Your account details have been updated.",
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
-      navigate('/verify',{ state: { username: formData.userName }});
+      navigate('/dashboard', { state: { username: formData.userName }});
       
     } catch (error) {
+      console.log(error);
       toast({
-        title: 'Registration failed.',
-        description: error.response?.data?.message || 'An error occurred during registration.',
+        title: 'Update failed.',
+        description: error.response?.data?.message || 'An error occurred during update.',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -135,13 +169,9 @@ export const Signup = () => {
     }
   };
 
-  const loginwithgoogle=()=>{
-    window.open("http://localhost:2000/auth/google/callback", "_self");
-  }
-
   return (
     <>
-    <Header />
+      <Navbar />
       <Flex h="90vh" align="center" justify="center">
         <Box w="100%" bg="white" boxShadow="xl" rounded="lg" overflow="hidden">
           <Flex h="90vh">
@@ -165,17 +195,7 @@ export const Signup = () => {
                     />
                     <FormErrorMessage>{errors.fullName}</FormErrorMessage>
                   </FormControl>
-                  <FormControl isInvalid={!!errors.email} width="350px">
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      variant="filled"
-                      placeholder="Email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                    <FormErrorMessage>{errors.email}</FormErrorMessage>
-                  </FormControl>
+                  
                   <FormControl isInvalid={!!errors.userName} width="350px">
                     <FormLabel>Username</FormLabel>
                     <Input
@@ -187,40 +207,10 @@ export const Signup = () => {
                     />
                     <FormErrorMessage>{errors.userName}</FormErrorMessage>
                   </FormControl>
-                  <FormControl isInvalid={!!errors.password} width="350px">
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                      variant="filled"
-                      placeholder="Password"
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
-                    <FormErrorMessage>{errors.password}</FormErrorMessage>
-                  </FormControl>
-                  <FormControl isInvalid={!!errors.confirmPassword} width="350px">
-                    <FormLabel>Confirm Password</FormLabel>
-                    <Input
-                      variant="filled"
-                      placeholder="Confirm Password"
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                    />
-                    <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
-                  </FormControl>
-                  <Box textAlign="center" mt={4}>
-                    <Text mb={2}>Or sign up with</Text>
-                    <Button leftIcon={<FcGoogle fontSize="24px" />} variant="outline" onClick={loginwithgoogle}>
-                      Sign up with Google
-                    </Button>
-                  </Box>
-
+                  
                   <Flex justify="center">
                     <Button colorScheme="teal" size="lg" width="70%" type="submit" isLoading={isSubmitting}>
-                      Sign Up
+                     Update
                     </Button>
                   </Flex>
                 </Stack>
@@ -228,9 +218,8 @@ export const Signup = () => {
             </Box>
             <Box w="30%" backgroundImage={`url(${signupImage})`} backgroundSize="cover" backgroundPosition="center" position="relative">
               <Box position="absolute" bottom="60" left="50%" transform="translateX(-50%)" textAlign="center" color="white">
-                <Text fontSize="3xl" fontWeight="bold">Already have an account?</Text>
-                <Text mt={2}>Login and start solving problems</Text>
-                <Button mt={4} colorScheme="whiteAlpha" variant="outline">Login</Button>
+                <Text fontSize="3xl" fontWeight="bold">Want to go back to dashboard</Text>
+                <Button mt={4} colorScheme="whiteAlpha" variant="outline">Click Here</Button>
               </Box>
             </Box>
           </Flex>
