@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { SearchIcon, StarIcon, TimeIcon, CheckCircleIcon } from '@chakra-ui/icons';
 import Navbar from '../Components/Navbar';
+import { Link } from 'react-router-dom';
 
 export const UserProblems = () => {
   const [problems, setProblems] = useState([]);
@@ -202,9 +203,9 @@ export const UserProblems = () => {
                       ))}
                     </Wrap>
                   </VStack>
-                  <Button colorScheme="blue" size="sm">
-                    Solve
-                  </Button>
+                  <Button as={Link} to={`/problems/${problem._id}/solve`} colorScheme="blue" size="sm">
+  Solve
+</Button>
                 </Flex>
               </Box>
             ))}

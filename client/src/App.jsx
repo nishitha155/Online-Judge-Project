@@ -17,6 +17,8 @@ import AddTestCase from './pages/AddTestCase';
 import UpdateProblem from './pages/UpdateProblem';
 import { UserProblems } from './pages/UserProblems';
 import { SingleProblem } from './pages/SingleProblem';
+import ProblemSolve from './pages/Editor';
+import CreateContest from './pages/CreateContest';
 
 function App() {
 
@@ -32,12 +34,13 @@ function App() {
        
         <Route path="/assignments" element={<Assignments />} />
         <Route path="/contest" element={<Contests />} />
+        <Route path="/create" element={<CreateContest />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/update" element={<Update />} />
         <Route path="/password" element={<ChangePassword />} />
         <Route path="/add" element={<AddQuestion />} />
         <Route path="/problems" element={<AllProblems />} />
-        <Route path="/single" element={<SingleProblem />} />
+        <Route path="/problems/:id/solve" element={<ProblemSolve />} />
         <Route path="/userproblems" element={<UserProblems/>} />
         <Route path="/problems/:problemId/add-testcase" element={<AddTestCase />} />
         <Route path="/problems/:problemId/update" element={<UpdateProblem />} />

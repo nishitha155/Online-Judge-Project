@@ -9,7 +9,9 @@ const QuestionSchema = new mongoose.Schema({
   inputDescription: { type: String, required: true },
   outputDescription: { type: String, required: true },
   constraints: { type: String, required: true },
-  language: { type: String, required: true },
+  language: { type: String},
+  submissions:{type: Number,default:0},
+  succesful:{type:Number,default:0},
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

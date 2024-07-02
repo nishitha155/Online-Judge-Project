@@ -15,8 +15,17 @@ const {generateOTP} = require('./utils/mail');
 const cookieParser = require('cookie-parser');
 const Question = require('./models/Question');
 const TestCase = require('./models/TestCase');
-const {generateFile} = require('./generateFile');
-const {executeCpp}=require('./executeCpp');
+const Submission = require('./models/Submission');
+const Contest=require('./models/Contest');
+
+
+
+
+
+
+
+
+
 app.use(bodyParser.json());
 const cors = require('cors');
 const { mailTransport, generateEmailTemplate, plainEmailTemplate } = require('./utils/mail');
@@ -519,36 +528,104 @@ app.post('/problems/:id/testcases', async (req, res) => {
 
 // In your existing backend file
 
-app.delete('/problems/:id', async (req, res) => {
+
+app.get('/api/problems', async (req, res) => {
   try {
-    const deletedProblem = await Question.findByIdAndDelete(req.params.id);
-    if (!deletedProblem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-    // Also delete associated test cases
-    await TestCase.deleteMany({ problemId: req.params.id });
-    res.json({ message: 'Problem and associated test cases deleted successfully' });
+    const problems = await Question.find();
+    const problemsWithTestCases = await Promise.all(problems.map(async (problem) => {
+      const testCases = await TestCase.find({ problemId: problem._id });
+      return { ...problem.toObject(), testCases };
+    }));
+    res.json(problemsWithTestCases);
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting problem', error: error.message });
+    res.status(500).json({ message: 'Error fetching problems', error: error.message });
   }
 });
 
-app.post('/run',async(req,res)=>{
-  const {language='cpp',code} = req.body
-  if(code===undefined){
-    return res.status(400).json({message:'code is required'})
-  }
-  try{
-   const filePath=await generateFile(language,code)
-   const output=await executeCpp(filePath);
 
-      res.send({filePath})
-  }catch(err){
-   
-    return res.status(500).json({message:'Error'+err.message})
+
+// Delete a test case
+app.delete('/api/testcases/:id', async (req, res) => {
+  try {
+    await TestCase.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Test case deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting test case', error: error.message });
   }
-  
-})
+});
+
+
+app.get('/api/problems/:id', async (req, res) => {
+  try {
+    const problem = await Question.findById(req.params.id);
+    res.json(problem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching problem', error: error.message });
+  }
+});
+
+app.get('/api/problems/:id/testcases', async (req, res) => {
+  try {
+    const testCases = await TestCase.find({ problemId: req.params.id });
+    res.json(testCases);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching test cases', error: error.message });
+  }
+});
+
+app.post('/api/problems/:id/testcases', async (req, res) => {
+  try {
+    const newTestCase = new TestCase({
+      ...req.body,
+      problemId: req.params.id
+    });
+    await newTestCase.save();
+    res.status(201).json(newTestCase);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding test case', error: error.message });
+  }
+});
+
+
+
+
+app.post('/api/contests', async (req, res) => {
+  try {
+    console.log(req.body);
+    const newContest = new Contest(req.body);
+    const savedContest = await newContest.save();
+    res.status(201).json({ message: 'Contest created successfully', contestId: savedContest._id });
+  } catch (error) {
+    res.status(400).json({ message: 'Error creating contest', error: error.message });
+  }
+});
+
+app.get('/api/contests/:id', async (req, res) => {
+  try {
+    const contest = await Contest.findById(req.params.id);
+    if (!contest) {
+      return res.status(404).json({ message: 'Contest not found' });
+    }
+    res.json(contest);
+  } catch (error) {
+    res.status(400).json({ message: 'Error fetching contest', error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(2000, () => {
     console.log('Server is running on port 2000');

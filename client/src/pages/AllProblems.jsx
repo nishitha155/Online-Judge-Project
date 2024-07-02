@@ -3,23 +3,24 @@ import { Link } from 'react-router-dom';
 import {
   Box, Container, Heading, Text, VStack, HStack, Tag, Badge, Button,
   useDisclosure, Collapse, SimpleGrid, useToast, Modal, ModalOverlay,
-  ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton
+  ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
+  IconButton
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon, DeleteIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 
-
 export const AllProblems = () => {
-    const [problems, setProblems] = useState([]);
-    const toast = useToast();
-    const [problemToDelete, setProblemToDelete] = useState(null);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  const [problems, setProblems] = useState([]);
+  const toast = useToast();
+  const [problemToDelete, setProblemToDelete] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   useEffect(() => {
     fetchProblems();
   }, []);
 
   const fetchProblems = async () => {
     try {
-      const response = await fetch('http://localhost:2000/problems');
+      const response = await fetch('http://localhost:2000/api/problems');
       const data = await response.json();
       setProblems(data);
     } catch (error) {
@@ -39,11 +40,9 @@ export const AllProblems = () => {
     onOpen();
   };
 
-  
-
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:2000/problems/${problemToDelete._id}`, { method: 'DELETE' });
+      await fetch(`http://localhost:2000/api/problems/${problemToDelete._id}`, { method: 'DELETE' });
       onClose();
       fetchProblems();
       toast({
@@ -65,6 +64,45 @@ export const AllProblems = () => {
     }
   };
 
+  const handleTestCaseDelete = async (problemId, testCaseId) => {
+    try {
+      const response = await fetch(`http://localhost:2000/api/testcases/${testCaseId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProblems(problems.map(problem => {
+          if (problem._id === problemId) {
+            return {
+              ...problem,
+              testCases: problem.testCases.filter(tc => tc._id !== testCaseId)
+            };
+          }
+          return problem;
+        }));
+        
+        toast({
+          title: 'Success',
+          description: 'Test case deleted successfully',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error('Failed to delete test case');
+      }
+    } catch (error) {
+      console.error('Error deleting test case:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete test case',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Container maxW="container.xl" py={8}>
       <Heading as="h1" size="2xl" textAlign="center" mb={8}>
@@ -76,8 +114,10 @@ export const AllProblems = () => {
             key={problem._id} 
             problem={problem} 
             onDeleteClick={() => handleDeleteClick(problem)}
+            onTestCaseDelete={handleTestCaseDelete}
           />
-        ))}</SimpleGrid>
+        ))}
+      </SimpleGrid>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -95,11 +135,10 @@ export const AllProblems = () => {
         </ModalContent>
       </Modal>
     </Container>
-    
   );
 };
 
-const ProblemCard = ({ problem, onDeleteClick }) => {
+const ProblemCard = ({ problem, onDeleteClick, onTestCaseDelete }) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -122,7 +161,6 @@ const ProblemCard = ({ problem, onDeleteClick }) => {
           <Badge colorScheme={getDifficultyColor(problem.difficulty)}>
             {problem.difficulty}
           </Badge>
-         
         </HStack>
         <Button rightIcon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />} onClick={onToggle} size="sm">
           {isOpen ? 'Hide' : 'Show'} Details
@@ -137,27 +175,40 @@ const ProblemCard = ({ problem, onDeleteClick }) => {
             <Text fontSize="sm">{problem.constraints}</Text>
           </VStack>
          
-<Text fontWeight="bold">Test Cases:</Text>
-<VStack align="stretch" spacing={2}>
-  {problem.testCases.map((testCase, index) => (
-    <Box key={index} borderWidth="1px" borderRadius="md" p={2}>
-      <Text fontWeight="bold">{testCase.isSample ? 'Sample ' : ''}Test Case {index + 1}</Text>
-      <Text>Input: {testCase.input}</Text>
-      <Text>Output: {testCase.output}</Text>
-    </Box>
-  ))}
-</VStack>
+          {problem.testCases && problem.testCases.length > 0 && (
+            <>
+              <Text fontWeight="bold" mt={4}>Test Cases:</Text>
+              <VStack align="stretch" spacing={2}>
+                {problem.testCases.map((testCase, index) => (
+                  <Box key={testCase._id || index} borderWidth="1px" borderRadius="md" p={2}>
+                    <HStack justify="space-between">
+                      <Text fontWeight="bold">{testCase.isSample ? 'Sample ' : ''}Test Case {index + 1}</Text>
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        size="sm"
+                        colorScheme="red"
+                        aria-label="Delete test case"
+                        onClick={() => onTestCaseDelete(problem._id, testCase._id)}
+                      />
+                    </HStack>
+                    <Text>Input: {testCase.input}</Text>
+                    <Text>Output: {testCase.output}</Text>
+                  </Box>
+                ))}
+              </VStack>
+            </>
+          )}
         </Collapse>
         <HStack justify="space-between">
-        <Button
-  leftIcon={<EditIcon />}
-  colorScheme="blue"
-  size="sm"
-  as={Link}
-  to={`/problems/${problem._id}/update`}
->
-  Update
-</Button>
+          <Button
+            leftIcon={<EditIcon />}
+            colorScheme="blue"
+            size="sm"
+            as={Link}
+            to={`/problems/${problem._id}/update`}
+          >
+            Update
+          </Button>
           <Button 
             leftIcon={<DeleteIcon />} 
             colorScheme="red" 
@@ -167,14 +218,14 @@ const ProblemCard = ({ problem, onDeleteClick }) => {
             Delete
           </Button>
           <Button
-  leftIcon={<AddIcon />}
-  colorScheme="green"
-  size="sm"
-  as={Link}
-  to={`/problems/${problem._id}/add-testcase`}
->
-  Add Testcases
-</Button>
+            leftIcon={<AddIcon />}
+            colorScheme="green"
+            size="sm"
+            as={Link}
+            to={`/problems/${problem._id}/add-testcase`}
+          >
+            Add Testcases
+          </Button>
         </HStack>
       </VStack>
     </Box>
