@@ -23,8 +23,9 @@ const userSchema = new mongoose.Schema({
         default:false
     },
        
-    streak: { type: Number, default: 0 },
-    lastSubmissionDate: { type: Date },
+    currentStreak: { type: Number, default: 0 },
+  maxStreak: { type: Number, default: 0 },
+  lastSubmission: { type: Date },
     joined: {
         type: Date,
         default: Date.now
@@ -38,3 +39,5 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+
+

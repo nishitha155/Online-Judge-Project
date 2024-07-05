@@ -42,12 +42,11 @@ export const Home = () => {
             Featured Plans
           </Heading>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={12}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={400} mb={5}>
             {[
               { title: 'Top 150 Interview Questions', image: top150 },
               { title: 'Master Dynamic Programming', image: dp },
-              { title: "Amazon's Most Frequent Questions", image: amazon },
-              { title: "Google's Most Frequent Questions", image: google },
+             
             ].map((plan, index) => (
               <Box
                 key={index}
