@@ -18,8 +18,8 @@ const TestCase = require('./models/TestCase');
 const Submission = require('./models/Submission');
 const Contest=require('./models/Contest');
 const calculateStreak=require('./utils/streakCalculator'); 
-
-
+const mongoose=require('mongoose');
+const Registration=require('./models/Registration');
 
 
 
@@ -630,17 +630,169 @@ app.get('/api/contests/:id', async (req, res) => {
   }
 });
 
+app.get('/contests/:contestId/problems/:problemId', authenticateToken, async (req, res) => {
+  try {
+    const contest = await Contest.findById(req.params.contestId);
+    if (!contest) {
+      return res.status(404).json({ message: 'Contest not found' });
+    }
+    const problem = contest.problems.id(req.params.problemId);
+    if (!problem) {
+      return res.status(404).json({ message: 'Problem not found' });
+    }
+    res.json(problem);
+  } catch (error) {
+    console.error('Error fetching problem:', error);
+    res.status(500).json({ message: 'Error fetching problem' });
+  }
+});
+// GET /contests endpoint
+app.get('/contests', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const contests = await Contest.find();
+    const registrations = await Registration.find({ userId: userId });
+
+    const contestsWithRegistrationStatus = contests.map(contest => {
+      const isRegistered = registrations.some(reg => reg.contestId.toString() === contest._id.toString());
+      console.log(`Contest ${contest._id}: User ${userId} is ${isRegistered ? 'registered' : 'not registered'}`);
+      return {
+        ...contest.toObject(),
+        isRegistered: isRegistered
+      };
+    });
+
+    res.json(contestsWithRegistrationStatus);
+  } catch (error) {
+    console.error('Error fetching contests:', error);
+    res.status(500).json({ message: 'Error fetching contests' });
+  }
+});
+
+// POST /registercontest endpoint
+app.post('/registercontest', authenticateToken, async (req, res) => {
+  try {
+    console.log('Registration request received');
+    const { contestId } = req.body;
+    const userId = req.user.userId;
+    console.log('Contest ID:', contestId);
+    console.log('User ID:', userId);
+
+    if (!contestId) {
+      return res.status(400).json({ message: 'Contest ID is required' });
+    }
+
+    const existingRegistration = await Registration.findOne({ userId, contestId });
+    if (existingRegistration) {
+      return res.status(400).json({ message: 'Already registered for this contest' });
+    }
+
+    const newRegistration = new Registration({
+      userId,
+      contestId,
+    });
+
+    await newRegistration.save();
+    res.status(201).json({ message: 'Successfully registered for the contest' });
+  } catch (error) {
+    console.error('Error registering for contest:', error);
+    res.status(500).json({ message: 'Error registering for contest' });
+  }
+});
+
+app.get('/contests/:contestId', async (req, res) => {
+  try {
+    const contest = await Contest.findById(req.params.contestId);
+    if (!contest) {
+      return res.status(404).json({ message: 'Contest not found' });
+    }
+    res.json(contest);
+  } catch (error) {
+    console.error('Error fetching contest:', error);
+    res.status(500).json({ message: 'Error fetching contest' });
+  }
+});
+// Start the server
 
 
+app.get('/problem-stats', authenticateToken, async (req, res) => {
+  try {
+    console.log('Fetching problem stats');
+    const userId = req.user.userId;
+    console.log(`User ID: ${userId}`);
 
+    // Count total problems
+    const totalProblems = await Question.countDocuments();
 
+    // Fetch accepted problems by the user
+    const acceptedProblems = await Submission.distinct('problemId', {
+      userId: userId,
+      status: 'Accepted'
+    });
+    const acceptedProblemsCount = acceptedProblems.length;
+    console.log(acceptedProblemsCount);
 
+    // Get difficulty stats for all problems
+    const difficultyStats = await Question.aggregate([
+      {
+        $group: {
+          _id: '$difficulty',
+          total: { $sum: 1 }
+        }
+      }
+    ]);
 
+    console.log(difficultyStats);
 
+    // Get accepted problem stats by difficulty for the user
+    const acceptedDifficultyStats = await Submission.aggregate([
+      {
+        $match: { userId: new mongoose.Types.ObjectId(userId), status: 'Accepted' }
+      },
+      {
+        $lookup: {
+          from: 'questions',
+          localField: 'problemId',
+          foreignField: '_id',
+          as: 'questionDetails'
+        }
+      },
+      {
+        $unwind: '$questionDetails'
+      },
+      {
+        $group: {
+          _id: '$questionDetails.difficulty',
+          accepted: { $addToSet: '$problemId' }
+        }
+      },
+      {
+        $project: {
+          difficulty: '$_id',
+          accepted: { $size: '$accepted' }
+        }
+      }
+    ]);
 
+    console.log(acceptedDifficultyStats);
 
-
-
+    // Merge the two stats arrays
+    const stats = {
+      totalProblems,
+      acceptedProblems: acceptedProblemsCount,
+      difficultyStats: difficultyStats.map(stat => ({
+        difficulty: stat._id,
+        total: stat.total,
+        accepted: acceptedDifficultyStats.find(a => a.difficulty === stat._id)?.accepted || 0
+      }))
+    };
+   
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching problem stats:', error);
+    res.status(500).json({ message: 'Error fetching problem stats' });
+  }
+});
 
 
 

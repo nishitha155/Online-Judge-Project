@@ -1,4 +1,4 @@
-import  React,{ useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, Container, VStack, Text, Button, Avatar, Heading, 
   Table, Thead, Tbody, Tr, Th, Td, useColorModeValue, SimpleGrid, 
@@ -8,7 +8,7 @@ import {
   AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader,
   AlertDialogContent, AlertDialogOverlay,
 } from '@chakra-ui/react';
-import {  ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronRightIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -19,11 +19,7 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-
-
 
 const getRandomValue = () => Math.floor(Math.random() * 5);
 
@@ -49,8 +45,7 @@ const submissions = [
 ];
 
 export const Dashboard = () => {
-  
-const [user, setUser] = useState({});
+  const [user, setUser] = useState({});
   const [year, setYear] = useState(new Date().getFullYear());
   const bgColor = useColorModeValue('white', 'gray.800');
   const [username, setUsername] = useState('');
@@ -58,10 +53,10 @@ const [user, setUser] = useState({});
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const cancelRef = React.useRef();
   const navigate = useNavigate();
+  const [problemStats, setProblemStats] = useState(null);
 
   const authToken = Cookies.get('authToken');
-  console.log(authToken)
-  
+  console.log(authToken);
 
   async function getUserDetails() {
     try {
@@ -73,12 +68,12 @@ const [user, setUser] = useState({});
         },
         credentials: 'include'
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-  
+
       const userDetails = await response.json();
       setUser(userDetails);
       
@@ -88,13 +83,10 @@ const [user, setUser] = useState({});
     }
   }
 
-  useEffect(() => {
-    
-    if (authToken) {
-      getUserDetails();
-    }
-  }, [authToken]);
-
+  const handleLogout = () => {
+    Cookies.remove('authToken');
+    navigate('/');
+  };
 
   const handleDeleteAccount = async () => {
     if (username === user.userName) {
@@ -124,6 +116,37 @@ const [user, setUser] = useState({});
     }
   };
 
+  const getProblemStats = async () => {
+    try {
+      const response = await fetch('http://localhost:2000/problem-stats', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch problem stats');
+      }
+      console.log(response);
+
+      const stats = await response.json();
+      setProblemStats(stats);
+    } catch (error) {
+      console.error('Error fetching problem stats:', error);
+      toast.error('Failed to fetch problem stats');
+    }
+  };
+
+  useEffect(() => {
+    if (authToken) {
+      getUserDetails();
+      getProblemStats();
+    }
+  }, [authToken]);
+
   return (
     <>
       <Navbar />
@@ -134,73 +157,73 @@ const [user, setUser] = useState({});
             <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
               <VStack spacing={6} align="center">
                 <Avatar name={user.fullName} size="2xl" />
-                <VStack spacing={2}>
-                  <Heading size="lg">{user.fullName}</Heading>
+                <VStack spacing={2} align="center">
+                  <Heading size="lg" textAlign="center">{user.fullName}</Heading>
                   <Text fontSize="md" color="gray.500">@{user.userName}</Text>
                 </VStack>
                 <VStack spacing={3} width="100%">
-                <Link to="/update">
-                  <Button colorScheme="blue"  width="100%">Update Profile</Button>
+                  <Link to="/update" style={{ width: '100%' }}>
+                    <Button colorScheme="blue" width="100%">Update Profile</Button>
                   </Link>
-                  <Link to="/password">
-                  <Button colorScheme="green"  width="100%">Change Password</Button>
+                  <Link to="/password" style={{ width: '100%' }}>
+                  <Button colorScheme="green" width="100%">Change Password</Button>
                   </Link>
-                  <Button colorScheme="red"  width="100%">Logout</Button>
-                  <Button colorScheme="gray"  width="100%" onClick={onOpen}>Delete Account</Button>
+                  <Button colorScheme="red" width="100%" onClick={handleLogout}>Logout</Button>
+                  <Button colorScheme="gray" width="100%" onClick={onOpen}>Delete Account</Button>
                   <Modal isOpen={isOpen} onClose={onClose}>
-                      <ModalOverlay />
-                      <ModalContent>
-            <ModalHeader>Delete Account</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text mb={4}>Please enter your username to confirm account deletion:</Text>
-              <Input
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </ModalBody>
-            <ModalFooter><Button colorScheme="blue" mr={3} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onClick={() => {
-                  onClose();
-                  setIsAlertOpen(true);
-                }}
-                isDisabled={username !== user.userName}
-              >
-                Delete Account
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-        <AlertDialog
-          isOpen={isAlertOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={() => setIsAlertOpen(false)}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Account
-              </AlertDialogHeader>
-              <AlertDialogBody>
-                Are you sure? This action cannot be undone.
-              </AlertDialogBody>
-              <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
-                  Cancel
-                </Button>
-                <Button colorScheme="red" onClick={handleDeleteAccount} ml={3}>
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-              </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
-                  
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Delete Account</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <Text mb={4}>Please enter your username to confirm account deletion:</Text>
+                        <Input
+                          placeholder="Enter username"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                        />
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                          Cancel
+                        </Button>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            onClose();
+                            setIsAlertOpen(true);
+                          }}
+                          isDisabled={username !== user.userName}
+                        >
+                          Delete Account
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                  <AlertDialog
+                    isOpen={isAlertOpen}
+                    leastDestructiveRef={cancelRef}
+                    onClose={() => setIsAlertOpen(false)}
+                  >
+                    <AlertDialogOverlay>
+                      <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                          Delete Account
+                        </AlertDialogHeader>
+                        <AlertDialogBody>
+                          Are you sure? This action cannot be undone.
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                          <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button colorScheme="red" onClick={handleDeleteAccount} ml={3}>
+                            Delete
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialogOverlay>
+                  </AlertDialog>
                 </VStack>
               </VStack>
             </Box>
@@ -212,31 +235,30 @@ const [user, setUser] = useState({});
               {/* Problem Solving Stats */}
               <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" width="100%">
                 <Heading size="md" mb={4}>Problem Solving Stats</Heading>
-                <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6}>
-                  <Stat>
-                    <StatLabel>Total Solved</StatLabel>
-                    <StatNumber>112</StatNumber>
-                    <Text fontSize="sm" color="gray.500">out of 3193</Text>
-                  </Stat>
-                  <Box>
-                    <CircularProgress value={60} size="100px" thickness="12px" color="cyan.400">
-                      <CircularProgressLabel>60</CircularProgressLabel>
-                    </CircularProgress>
-                    <Text mt={2} fontWeight="bold">Easy</Text>
-                  </Box>
-                  <Box>
-                    <CircularProgress value={51} size="100px" thickness="12px" color="orange.400">
-                      <CircularProgressLabel>51</CircularProgressLabel>
-                    </CircularProgress>
-                    <Text mt={2} fontWeight="bold">Medium</Text>
-                  </Box>
-                  <Box>
-                    <CircularProgress value={1} size="100px" thickness="12px" color="red.400">
-                      <CircularProgressLabel>1</CircularProgressLabel>
-                    </CircularProgress>
-                    <Text mt={2} fontWeight="bold">Hard</Text>
-                  </Box>
-                </SimpleGrid>
+                {problemStats ? (
+                  <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={6}>
+                    <Stat>
+                      <StatLabel>Total Solved</StatLabel>
+                      <StatNumber>{problemStats.acceptedProblems}</StatNumber>
+                      <Text fontSize="sm" color="gray.500">out of {problemStats.totalProblems}</Text>
+                    </Stat>
+                    {problemStats.difficultyStats.map(stat => (
+                      <Box key={stat.difficulty}>
+                        <CircularProgress
+                          value={stat.accepted / stat.total * 100}
+                          size="100px"
+                          thickness="12px"
+                          color={stat.difficulty === 'Easy' ? "cyan.400" : (stat.difficulty === 'Medium' ? "orange.400" : "red.400")}
+                        >
+                          <CircularProgressLabel>{stat.accepted}</CircularProgressLabel>
+                        </CircularProgress>
+                        <Text mt={2} fontWeight="bold">{stat.difficulty}</Text>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                ) : (
+                  <Text>Loading problem stats...</Text>
+                )}
               </Box>
 
               {/* Coding Streak Calendar */}
@@ -325,3 +347,5 @@ const [user, setUser] = useState({});
     </>
   );
 };
+
+export default Dashboard;

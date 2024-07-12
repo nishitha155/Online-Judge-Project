@@ -1,12 +1,10 @@
-import { useState } from 'react'
+
 import { Routes, Route } from 'react-router-dom';
 import { Signup } from './pages/Signup';
-import Navbar from './Components/Navbar';
 import { Home } from './pages/Home';
 import { HomeBeforeLogin } from './pages/HomeBeforeLogin';
 import { Login } from './pages/Login';
-import { Assignments } from './pages/Assignments';
-import { Contests } from './pages/Contests';
+import { Contest } from './pages/Contest';
 import { Dashboard } from './pages/Dashboard';
 import { Verification } from './pages/Verification';
 import { Update } from './pages/Update';
@@ -16,10 +14,11 @@ import AllProblems from './pages/AllProblems';
 import AddTestCase from './pages/AddTestCase';
 import UpdateProblem from './pages/UpdateProblem';
 import { UserProblems } from './pages/UserProblems';
-import { SingleProblem } from './pages/SingleProblem';
+
 import ProblemSolve from './pages/Editor';
 import CreateContest from './pages/CreateContest';
-
+import ContestAttempt from './pages/ContestAttempt';
+import ContestEditor from './pages/ContestEditor';
 
 function App() {
 
@@ -32,9 +31,8 @@ function App() {
         
         <Route path="/" element={<HomeBeforeLogin />} />
         <Route path="/home" element={<Home />} />
-       
-        <Route path="/assignments" element={<Assignments />} />
-        <Route path="/contest" element={<Contests />} />
+        <Route path="/contest" element={<Contest />} />
+        <Route path="/contest/:contestId" element={<ContestAttempt />} />
         <Route path="/create" element={<CreateContest />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/update" element={<Update />} />
@@ -45,6 +43,7 @@ function App() {
         <Route path="/userproblems" element={<UserProblems/>} />
         <Route path="/problems/:problemId/add-testcase" element={<AddTestCase />} />
         <Route path="/problems/:problemId/update" element={<UpdateProblem />} />
+        <Route path="/contest/:contestId/problem/:problemId" element={<ContestEditor />} />
      
     </Routes>
     </>

@@ -1,19 +1,18 @@
 import { useState } from 'react';
 import {
   Box, Flex, Text, Button, Image, HStack, Circle,
-  useColorModeValue, useDisclosure
+  useColorModeValue
 } from '@chakra-ui/react';
 import { FaFire } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import logo from '../assets/image.png';
-import useStreak from './useStreak';
 import { useStreakContext } from '../pages/StreakContest.jsx';
 
  const Navbar = () => {
   
-  const { currentStreak } = useStreakContext();
+  
   const bgColor = useColorModeValue('white', 'gray.800');
   const handleLogout = () => {
     // Implement logout logic here
@@ -42,19 +41,14 @@ import { useStreakContext } from '../pages/StreakContest.jsx';
            <Link to="/userproblems">
           <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
           </Link>
-          <Link to="/assignments">
-          <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Assignments</Button>
-          </Link>
+          
           <Link to="/contest">
           <Button variant="ghost" size={["sm", "md"]}>Contests</Button>
           </Link>
         </HStack>
 
         <HStack spacing={4} flex={1} justifyContent="flex-end">
-          <HStack>
-            <FaFire color="orange" />
-            <Text fontWeight="bold" display={["none", "block"]}>{currentStreak}</Text> {/* Replace with actual streak count */}
-          </HStack>
+          
           <Button
            
             colorScheme="teal"
