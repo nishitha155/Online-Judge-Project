@@ -11,6 +11,7 @@ import Header from '../Components/Header';
 import signupImage from './signup-background.jpg';
 import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 axios.defaults.baseURL = 'http://localhost:2000';
 export const Signup = () => {
   const navigate=useNavigate();
@@ -120,7 +121,7 @@ export const Signup = () => {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/verify',{ state: { username: formData.userName }});
+      navigate('/home',);
       
     } catch (error) {
       toast({
@@ -135,9 +136,9 @@ export const Signup = () => {
     }
   };
 
-  const loginwithgoogle=()=>{
-    window.open("http://localhost:2000/auth/google/callback", "_self");
-  }
+  // const loginwithgoogle=()=>{
+  //   window.open("http://localhost:2000/auth/google/callback", "_self");
+  // }
 
   return (
     <>
@@ -211,12 +212,12 @@ export const Signup = () => {
                     />
                     <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
                   </FormControl>
-                  <Box textAlign="center" mt={4}>
+                  {/* <Box textAlign="center" mt={4}>
                     <Text mb={2}>Or sign up with</Text>
                     <Button leftIcon={<FcGoogle fontSize="24px" />} variant="outline" onClick={loginwithgoogle}>
                       Sign up with Google
                     </Button>
-                  </Box>
+                  </Box> */}
 
                   <Flex justify="center">
                     <Button colorScheme="teal" size="lg" width="70%" type="submit" isLoading={isSubmitting}>
@@ -230,7 +231,9 @@ export const Signup = () => {
               <Box position="absolute" bottom="60" left="50%" transform="translateX(-50%)" textAlign="center" color="white">
                 <Text fontSize="3xl" fontWeight="bold">Already have an account?</Text>
                 <Text mt={2}>Login and start solving problems</Text>
+                <Link to="/user/login">
                 <Button mt={4} colorScheme="whiteAlpha" variant="outline">Login</Button>
+                </Link>
               </Box>
             </Box>
           </Flex>

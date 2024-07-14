@@ -27,10 +27,10 @@ connectDB();
 
 //middlewares
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: '*',
     credentials: true,
   };
-  app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());

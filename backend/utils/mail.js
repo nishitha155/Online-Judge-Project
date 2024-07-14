@@ -10,12 +10,12 @@ exports.generateOTP=()=>{
 
 
 exports.mailTransport=()=>nodemailer.createTransport({
-       host:"smtp-mail.outlook.com",  // Use environment variable for SECURE
+    host:"smtp-mail.outlook.com",
     auth: {
-        user: 'charugundlalakshminishitha@gmail.com', // Use environment variable for USERNAME
-        pass: 'lnishitha@123'  // Use environment variable for PASSWORD
-    }
-    })
+        user: 'charugundlalakshminishitha@gmail.com',
+        pass: 'lnishitha@123'
+    }   
+})
 
 
 exports.generateEmailTemplate=code=>{

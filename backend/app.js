@@ -10,7 +10,7 @@ const session=require('express-session');
 const passport=require('passport');
 const OAuth2Strategy=require('passport-google-oauth2').Strategy;
 const crypto = require('crypto');
-const VerificationToken = require('./models/VerificationToken');
+const VerificationToken = require('./models/verificationToken');
 const {generateOTP} = require('./utils/mail');
 const cookieParser = require('cookie-parser');
 const Question = require('./models/Question');
@@ -202,73 +202,76 @@ app.post('/register', async (req, res) => {
       email,
       fullName,
       userName,
+      verified: true,
       joined: new Date(),
             lastUpdate: new Date()
     });
 
-    const OTP=generateOTP();
-    const verificationToken=new VerificationToken({
-        owner:user._id,
-        token:OTP
-    });
+    // const OTP=generateOTP();
+    // const verificationToken=new VerificationToken({
+    //     owner:user._id,
+    //     token:OTP
+    // });
     
-    await verificationToken.save();
-    await user.save();
+    // await verificationToken.save();
+     await user.save();
 
-    mailTransport().sendMail({
-      from:'charugundlalakshminishitha@gmail.com',
-      to:user.email,
-      subject:'OTP Verification',
-      html:generateEmailTemplate(OTP)
-    })
+    // mailTransport().sendMail({
+    //   from:'charugundlalakshminishitha@gmail.com',
+    //   to:user.email,
+    //   subject:'OTP Verification',
+    //   html:generateEmailTemplate(OTP)
+    // })
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true });
     
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({token:token, message: "User registered successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-app.post("/verify-email", async (req, res) => {
-  const { username, otp } = req.body;
-  if (!username || !otp.trim()) {
-    return res.status(400).json({ message: "Invalid Request" });
-  }
+// app.post("/verify-email", async (req, res) => {
+//   const { username, otp } = req.body;
+//   if (!username || !otp.trim()) {
+//     return res.status(400).json({ message: "Invalid Request" });
+//   }
  
 
-  const user = await User.findOne({ userName: username });
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-  if (user.verified) {
-    return res.status(400).json({ message: "Already verified" });
-  }
+//   const user = await User.findOne({ userName: username });
+//   if (!user) {
+//     return res.status(404).json({ message: "User not found" });
+//   }
+//   if (user.verified) {
+//     return res.status(400).json({ message: "Already verified" });
+//   }
 
-  const token1 = await VerificationToken.findOne({ owner: user._id });
-  if (!token1) {
-    return res.status(404).json({ message: "Token not found" });
-  }
+//   const token1 = await VerificationToken.findOne({ owner: user._id });
+//   if (!token1) {
+//     return res.status(404).json({ message: "Token not found" });
+//   }
 
-  const isMatched = await token1.compareToken(otp);
-  if (!isMatched) {
-    return res.status(400).json({ message: "Provide Valid Token" });
-  }
+//   const isMatched = await token1.compareToken(otp);
+//   if (!isMatched) {
+//     return res.status(400).json({ message: "Provide Valid Token" });
+//   }
 
-  user.verified = true;
-  await VerificationToken.findByIdAndDelete(token1._id);
-  await user.save();
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.cookie('token', token, { httpOnly: true });
+//   user.verified = true;
+//   await VerificationToken.findByIdAndDelete(token1._id);
+//   await user.save();
+//   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//     res.cookie('token', token, { httpOnly: true });
 
-  mailTransport().sendMail({
-    from: 'charugundlalakshminishitha@gmail.com',
-    to: user.email,
-    subject: 'OTP Verification',
-    html: plainEmailTemplate("Email Verified", "Thank you for verifying your email")
-  });
+//   mailTransport().sendMail({
+//     from: 'charugundlalakshminishitha@gmail.com',
+//     to: user.email,
+//     subject: 'OTP Verification',
+//     html: plainEmailTemplate("Email Verified", "Thank you for verifying your email")
+//   });
 
-  res.json({ token:token,message: "Email Verified" });
-});
+//   res.json({ token:token,message: "Email Verified" });
+// });
 
 
 app.get("/userdetails", authenticateToken, async (req, res) => {
@@ -604,6 +607,27 @@ app.post('/api/problems/:id/testcases', async (req, res) => {
   }
 });
 
+
+app.get('/user-submissions', authenticateToken, async (req, res) => {
+  try {
+    console.log('User:', req.user.userId);
+    const userId = req.user.userId;
+    const submissions = await Submission.find({ userId }).select('createdAt');
+    
+    // Group submissions by date
+    const submissionDates = submissions.reduce((acc, submission) => {
+      const date = submission.createdAt.toISOString().split('T')[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
+    console.log(submissionDates);
+
+    res.json(submissionDates);
+  } catch (error) {
+    console.error('Error fetching user submissions:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 
 

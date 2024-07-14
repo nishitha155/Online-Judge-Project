@@ -52,7 +52,8 @@ const ProblemSolve = () => {
 
   const fetchSubmissions = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/problems/${id}/submissions`);
+      const url = `${import.meta.env.VITE_BACKEND_URL}/api/problems/${id}/submissions`;
+      const response = await axios.get(url);
       setSubmissions(response.data);
     } catch (error) {
       console.error('Error fetching submissions:', error);
@@ -61,7 +62,8 @@ const ProblemSolve = () => {
 
   const fetchMySubmissions = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/problems/${id}/mysubmissions`, {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/api/problems/${id}/mysubmissions`;
+      const response = await fetch( url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +100,8 @@ const ProblemSolve = () => {
 
   const handleRun = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/run`, {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/run`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +117,8 @@ const ProblemSolve = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/submit/${id}`, {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/submit/${id}`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

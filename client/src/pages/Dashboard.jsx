@@ -11,22 +11,12 @@ import {
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import Navbar from '../Components/Navbar';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-const getRandomValue = () => Math.floor(Math.random() * 5);
-
-const calendarData = [...Array(365)].map((_, index) => ({
-  date: new Date(2023, 0, index + 1),
-  count: getRandomValue(),
-}));
 
 const pastContests = [
   { name: 'Weekly Contest 300', date: '2024-06-15', time: '20:00 UTC', rank: 245 },
@@ -54,9 +44,9 @@ export const Dashboard = () => {
   const cancelRef = React.useRef();
   const navigate = useNavigate();
   const [problemStats, setProblemStats] = useState(null);
+  const [submissionData, setSubmissionData] = useState([]);
 
   const authToken = Cookies.get('authToken');
-  console.log(authToken);
 
   async function getUserDetails() {
     try {
@@ -130,7 +120,6 @@ export const Dashboard = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch problem stats');
       }
-      console.log(response);
 
       const stats = await response.json();
       setProblemStats(stats);
@@ -140,10 +129,35 @@ export const Dashboard = () => {
     }
   };
 
+  const getSubmissionData = async () => {
+    try {
+      const response = await fetch('http://localhost:2000/api/user-submissions', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch submission data');
+      }
+
+      const data = await response.json();
+      const formattedData = Object.entries(data).map(([date, count]) => ({ date, count }));
+      setSubmissionData(formattedData);
+    } catch (error) {
+      console.error('Error fetching submission data:', error);
+      toast.error('Failed to fetch submission data');
+    }
+  };
+
   useEffect(() => {
     if (authToken) {
       getUserDetails();
       getProblemStats();
+      getSubmissionData();
     }
   }, [authToken]);
 
@@ -166,64 +180,10 @@ export const Dashboard = () => {
                     <Button colorScheme="blue" width="100%">Update Profile</Button>
                   </Link>
                   <Link to="/password" style={{ width: '100%' }}>
-                  <Button colorScheme="green" width="100%">Change Password</Button>
+                    <Button colorScheme="green" width="100%">Change Password</Button>
                   </Link>
                   <Button colorScheme="red" width="100%" onClick={handleLogout}>Logout</Button>
                   <Button colorScheme="gray" width="100%" onClick={onOpen}>Delete Account</Button>
-                  <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalOverlay />
-                    <ModalContent>
-                      <ModalHeader>Delete Account</ModalHeader>
-                      <ModalCloseButton />
-                      <ModalBody>
-                        <Text mb={4}>Please enter your username to confirm account deletion:</Text>
-                        <Input
-                          placeholder="Enter username"
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                        />
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
-                          Cancel
-                        </Button>
-                        <Button
-                          colorScheme="red"
-                          onClick={() => {
-                            onClose();
-                            setIsAlertOpen(true);
-                          }}
-                          isDisabled={username !== user.userName}
-                        >
-                          Delete Account
-                        </Button>
-                      </ModalFooter>
-                    </ModalContent>
-                  </Modal>
-                  <AlertDialog
-                    isOpen={isAlertOpen}
-                    leastDestructiveRef={cancelRef}
-                    onClose={() => setIsAlertOpen(false)}
-                  >
-                    <AlertDialogOverlay>
-                      <AlertDialogContent>
-                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                          Delete Account
-                        </AlertDialogHeader>
-                        <AlertDialogBody>
-                          Are you sure? This action cannot be undone.
-                        </AlertDialogBody>
-                        <AlertDialogFooter>
-                          <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
-                            Cancel
-                          </Button>
-                          <Button colorScheme="red" onClick={handleDeleteAccount} ml={3}>
-                            Delete
-                          </Button>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialogOverlay>
-                  </AlertDialog>
                 </VStack>
               </VStack>
             </Box>
@@ -267,12 +227,12 @@ export const Dashboard = () => {
                 <CalendarHeatmap
                   startDate={new Date(year, 0, 1)}
                   endDate={new Date(year, 11, 31)}
-                  values={calendarData}
+                  values={submissionData}
                   classForValue={(value) => {
                     if (!value) {
                       return 'color-empty';
                     }
-                    return `color-scale-${value.count}`;
+                    return `color-scale-${Math.min(value.count, 4)}`;
                   }}
                 />
                 <style jsx global>{`
@@ -344,6 +304,64 @@ export const Dashboard = () => {
           </Box>
         </SimpleGrid>
       </Container>
+
+      {/* Delete Account Modal */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Delete Account</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb={4}>Please enter your username to confirm account deletion:</Text>
+            <Input
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="red"
+              onClick={() => {
+                onClose();
+                setIsAlertOpen(true);
+              }}
+              isDisabled={username !== user.userName}
+            >
+              Delete Account
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Account Confirmation Alert */}
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsAlertOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Account
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure? This action cannot be undone.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsAlertOpen(false)}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteAccount} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };
