@@ -28,7 +28,7 @@ const Registration=require('./models/Registration');
 
 app.use(bodyParser.json());
 const cors = require('cors');
-const { mailTransport, generateEmailTemplate, plainEmailTemplate } = require('./utils/mail');
+// const { mailTransport, generateEmailTemplate, plainEmailTemplate } = require('./utils/mail');
 const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
