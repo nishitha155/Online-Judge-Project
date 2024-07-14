@@ -27,7 +27,7 @@ connectDB();
 
 //middlewares
 const corsOptions = {
-    origin: '*',
+    origin: 'https://www.algobug.online',
     credentials: true,
   };
 app.use(cors(corsOptions));
