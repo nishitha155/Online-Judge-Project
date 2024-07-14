@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 const cors = require('cors');
 // const { mailTransport, generateEmailTemplate, plainEmailTemplate } = require('./utils/mail');
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: 'https://algobug.vercel.app',
   credentials: true,
 };
 app.use(cors(corsOptions));
