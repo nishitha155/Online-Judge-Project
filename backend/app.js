@@ -10,8 +10,8 @@ const session=require('express-session');
 const passport=require('passport');
 const OAuth2Strategy=require('passport-google-oauth2').Strategy;
 const crypto = require('crypto');
-const VerificationToken = require('./models/verificationToken');
-const {generateOTP} = require('./utils/mail');
+
+
 const cookieParser = require('cookie-parser');
 const Question = require('./models/Question');
 const TestCase = require('./models/TestCase');
