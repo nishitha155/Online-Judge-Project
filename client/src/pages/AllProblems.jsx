@@ -20,7 +20,7 @@ export const AllProblems = () => {
 
   const fetchProblems = async () => {
     try {
-      const response = await fetch('http://localhost:2000/api/problems');
+      const response = await fetch('https://algobug.onrender.com/api/problems');
       const data = await response.json();
       setProblems(data);
     } catch (error) {
@@ -42,7 +42,7 @@ export const AllProblems = () => {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:2000/api/problems/${problemToDelete._id}`, { method: 'DELETE' });
+      await fetch(`https://algobug.onrender.com/api/problems/${problemToDelete._id}`, { method: 'DELETE' });
       onClose();
       fetchProblems();
       toast({
@@ -66,7 +66,7 @@ export const AllProblems = () => {
 
   const handleTestCaseDelete = async (problemId, testCaseId) => {
     try {
-      const response = await fetch(`http://localhost:2000/api/testcases/${testCaseId}`, {
+      const response = await fetch(`https://algobug.onrender.com/api/testcases/${testCaseId}`, {
         method: 'DELETE',
       });
 

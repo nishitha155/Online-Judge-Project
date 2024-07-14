@@ -15,7 +15,7 @@ import Header from '../Components/Header';
 import Cookies from 'js-cookie'
 
 
-axios.defaults.baseURL = 'http://localhost:2000';
+axios.defaults.baseURL = 'https://algobug.onrender.com';
 
 export const Login = () => {
     const navigate=useNavigate();
@@ -104,7 +104,7 @@ export const Login = () => {
   };
 
   const loginwithgoogle=()=>{
-    window.open("http://localhost:2000/auth/google/callback", "_self");
+    window.open("https://algobug.onrender.com/auth/google/callback", "_self");
   }
 
   async function handleAuthCallback() {

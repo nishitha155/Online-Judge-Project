@@ -33,7 +33,7 @@ const ContestAttempt = () => {
   useEffect(() => {
     const fetchContestDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:2000/contests/${contestId}`);
+        const response = await fetch(`https://algobug.onrender.com/contests/${contestId}`);
         if (!response.ok) throw new Error('Failed to fetch contest details');
         const data = await response.json();
         setContest(data);

@@ -31,7 +31,7 @@ const ChangePassword = () => {
   useEffect(() => {
     const checkExistingPassword = async () => {
       try {
-        const response = await fetch('http://localhost:2000/check-password', {
+        const response = await fetch('https://algobug.onrender.com/check-password', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -65,7 +65,7 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:2000/change-password', {
+      const response = await fetch('https://algobug.onrender.com/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

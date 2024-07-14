@@ -15,7 +15,7 @@ import Navbar from '../Components/Navbar';
 import Cookies from 'js-cookie'
 
 
-axios.defaults.baseURL = 'http://localhost:2000';
+axios.defaults.baseURL = 'https://algobug.onrender.com';
 
 export const Update = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export const Update = () => {
 
   async function getUserDetails() {
     try {
-      const response = await fetch('http://localhost:2000/userdetails', {
+      const response = await fetch('https://algobug.onrender.com/userdetails', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

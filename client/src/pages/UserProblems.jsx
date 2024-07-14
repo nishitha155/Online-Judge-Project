@@ -46,7 +46,7 @@ export const UserProblems = () => {
 
   const fetchProblems = async () => {
     try {
-      const response = await fetch('http://localhost:2000/problems');
+      const response = await fetch('https://algobug.onrender.com/problems');
       const data = await response.json();
       setProblems(data);
     } catch (error) {

@@ -19,7 +19,7 @@ export const AddTestCase = () => {
 
   const fetchProblem = async () => {
     try {
-      const response = await fetch(`http://localhost:2000/problems/${problemId}`);
+      const response = await fetch(`https://algobug.onrender.com/${problemId}`);
       const data = await response.json();
       setProblem(data);
     } catch (error) {
@@ -47,7 +47,7 @@ export const AddTestCase = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:2000/problems/${problemId}/testcases`, {
+      const response = await fetch(`https://algobug.onrender.com/${problemId}/testcases`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

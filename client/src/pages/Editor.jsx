@@ -80,7 +80,7 @@ const ProblemSolve = () => {
 
   const fetchProblem = async () => {
     try {
-      const response = await fetch(`http://localhost:2000/api/problems/${id}`);
+      const response = await fetch(`https://algobug.onrender.com/api/problems/${id}`);
       const data = await response.json();
       setProblem(data);
     } catch (error) {
@@ -90,7 +90,7 @@ const ProblemSolve = () => {
 
   const fetchTestCases = async () => {
     try {
-      const response = await fetch(`http://localhost:2000/api/problems/${id}/testcases`);
+      const response = await fetch(`https://algobug.onrender.com/api/problems/${id}/testcases`);
       const data = await response.json();
       setTestCases(data);
     } catch (error) {

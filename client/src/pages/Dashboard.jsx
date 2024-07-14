@@ -50,7 +50,7 @@ export const Dashboard = () => {
 
   async function getUserDetails() {
     try {
-      const response = await fetch('http://localhost:2000/userdetails', {
+      const response = await fetch('https://algobug.onrender.com/userdetails', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export const Dashboard = () => {
   const handleDeleteAccount = async () => {
     if (username === user.userName) {
       try {
-        const response = await fetch('http://localhost:2000/deleteaccount', {
+        const response = await fetch('https://algobug.onrender.com/deleteaccount', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export const Dashboard = () => {
 
   const getProblemStats = async () => {
     try {
-      const response = await fetch('http://localhost:2000/problem-stats', {
+      const response = await fetch('https://algobug.onrender.com/problem-stats', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ export const Dashboard = () => {
 
   const getSubmissionData = async () => {
     try {
-      const response = await fetch('http://localhost:2000/api/user-submissions', {
+      const response = await fetch('https://algobug.onrender.com/api/user-submissions', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

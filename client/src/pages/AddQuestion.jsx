@@ -38,7 +38,7 @@ export const AddQuestion = () => {
       if (formData.title.length > 0) {
         setIsCheckingTitle(true);
         try {
-          const response = await fetch(`http://localhost:2000/checktitle/${encodeURIComponent(formData.title)}`);
+          const response = await fetch(`https://algobug.onrender.com/checktitle/${encodeURIComponent(formData.title)}`);
           const data = await response.json();
           setIsTitleUnique(data.isUnique);
         } catch (error) {
@@ -88,7 +88,7 @@ export const AddQuestion = () => {
 
     try {
       console.log('Submitting form data:', formData);
-      const response = await fetch('http://localhost:2000/addquestions', {
+      const response = await fetch('https://algobug.onrender.com/addquestions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

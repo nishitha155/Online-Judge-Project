@@ -12,7 +12,7 @@ import signupImage from './signup-background.jpg';
 import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-axios.defaults.baseURL = 'http://localhost:2000';
+axios.defaults.baseURL = 'https://algobug.onrender.com';
 export const Signup = () => {
   const navigate=useNavigate();
   const [formData, setFormData] = useState({

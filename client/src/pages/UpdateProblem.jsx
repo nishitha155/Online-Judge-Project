@@ -31,7 +31,7 @@ export const UpdateProblem = () => {
 
   const fetchProblem = async () => {
     try {
-      const response = await fetch(`http://localhost:2000/problems/${problemId}`);
+      const response = await fetch(`https://algobug.onrender.com/problems/${problemId}`);
       const data = await response.json();
       setProblem(data);
     } catch (error) {
@@ -65,7 +65,7 @@ export const UpdateProblem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:2000/problems/${problemId}`, {
+      const response = await fetch(`https://algobug.onrender.com/problems/${problemId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

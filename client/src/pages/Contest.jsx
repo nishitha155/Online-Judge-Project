@@ -88,7 +88,7 @@ export const Contest = () => {
 
   const fetchContests = async () => {
     try {
-      const response = await fetch('http://localhost:2000/contests', {
+      const response = await fetch('https://algobug.onrender.com/contests', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ export const Contest = () => {
 
   const handleRegister = async (contestId) => {
     try {
-      const response = await fetch('http://localhost:2000/registercontest', {
+      const response = await fetch('https://algobug.onrender.com/registercontest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

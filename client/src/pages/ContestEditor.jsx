@@ -77,7 +77,7 @@ const ContestEditor = () => {
 
   const fetchProblem = async () => {
     try {
-      const response = await axios.get(`http://localhost:2000/contests/${contestId}/problems/${problemId}`, {
+      const response = await axios.get(`https://algobug.onrender.com/contests/${contestId}/problems/${problemId}`, {
         headers: { 'Authorization': `Bearer ${authToken}` }
       });
       setProblem(response.data);

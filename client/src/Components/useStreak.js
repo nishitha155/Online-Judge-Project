@@ -15,7 +15,7 @@ const useStreak = () => {
         const fetchStreak = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`http://localhost:2000/api/users/streak`, {
+                const response = await fetch(`https://algobug.onrender.com/api/users/streak`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

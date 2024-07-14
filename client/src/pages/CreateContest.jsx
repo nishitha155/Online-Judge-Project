@@ -115,7 +115,7 @@ const CreateContest = () => {
     const contestData = { contestName, startTime, duration, rules, problems };
     
     try {
-      const response = await fetch('http://localhost:2000/api/contests', {
+      const response = await fetch('https://algobug.onrender.com/api/contests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
