@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box, Heading, SimpleGrid, Image, Button, Table, Thead, Tbody, Tr, Th, Td,
   VStack, Text, Container, useColorModeValue, Flex, HStack
 } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 import Header1 from '../Components/Header1';
-import { LockIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
+import { Footer } from '../Components/Footer';
+
 // Import your images
 import interviewImage from '../assets/back1.jpg';
 import dpImage from '../assets/back9.jpg';
@@ -15,12 +18,30 @@ import googleImage from '../assets/back4.jpg';
 import google from '../assets/back8.webp';
 import top150 from '../assets/back5.jpg';
 import dp from '../assets/back6.png';
-import { useNavigate } from 'react-router-dom';
-import { Footer } from '../Components/Footer';
 
 export const HomeBeforeLogin = () => {
+  const [upcomingContests, setUpcomingContests] = useState([]);
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const boxBgColor = useColorModeValue('white', 'gray.700');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUpcomingContests = async () => {
+      try {
+        const response = await axios.get('https://algobug.onrender.com/upcoming');
+        setUpcomingContests(response.data);
+      } catch (error) {
+        console.error('Error fetching upcoming contests:', error);
+        toast.error('Failed to fetch upcoming contests');
+      }
+    };
+
+    fetchUpcomingContests();
+  }, []);
+
+  const handleLogin = () => {
+    navigate('/user/login');
+  };
 
   const handleStartSolving = (plan) => {
     toast.info(`Starting ${plan}`);
@@ -33,14 +54,10 @@ export const HomeBeforeLogin = () => {
   const handleUnlock = (assignment) => {
     toast.info(`Unlocking ${assignment}`);
   };
-  const handleLogin = () => {
-    navigate('/user/login');
-  };
-  const navigate = useNavigate(); 
+
   return (
     <>
-      <Header1/>
-    
+      <Header1 />
       <Box bg={bgColor} minH="100vh" py={8}>
         <Container maxW="container.xl">
           <Heading textAlign="center" mb={8} fontSize="3xl" fontWeight="bold">
@@ -86,22 +103,16 @@ export const HomeBeforeLogin = () => {
                   <Th>Contest Name</Th>
                   <Th>Date</Th>
                   <Th>Time</Th>
-                  
+                  <Th>Duration</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {[
-                  { name: 'Weekly Contest 1', date: '2023-07-01', time: '20:00 IST' },
-                  { name: 'Biweekly Contest 1', date: '2023-07-08', time: '14:00 IST' },
-                  { name: 'Special Contest', date: '2023-07-15', time: '18:00 IST' },
-                ].map((contest, index) => (
+                {upcomingContests.map((contest, index) => (
                   <Tr key={index}>
-                    <Td>{contest.name}</Td>
-                    <Td>{contest.date}</Td>
-                    <Td>{contest.time}</Td>
-                    <Td>
-                      
-                    </Td>
+                    <Td>{contest.contestName}</Td>
+                    <Td>{new Date(contest.startTime).toLocaleDateString()}</Td>
+                    <Td>{new Date(contest.startTime).toLocaleTimeString()}</Td>
+                    <Td>{contest.duration} minutes</Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -118,9 +129,9 @@ export const HomeBeforeLogin = () => {
 
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
             {[
-              { name: 'Assignment 1',  image: interviewImage },
-              { name: 'Assignment 2',  image: dpImage },
-              { name: 'Assignment 3',  image: amazonImage },
+              { name: 'Assignment 1', image: interviewImage },
+              { name: 'Assignment 2', image: dpImage },
+              { name: 'Assignment 3', image: amazonImage },
             ].map((assignment, index) => (
               <Box
                 key={index}
@@ -134,13 +145,11 @@ export const HomeBeforeLogin = () => {
                 backgroundPosition="center"
               >
                 <Heading size="md" mb={4}>{assignment.name}</Heading>
-                
                 <Button 
                   colorScheme="green" 
                   onClick={handleLogin}
-                  
                 >
-                 Start Solving
+                  Start Solving
                 </Button>
               </Box>
             ))}

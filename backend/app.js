@@ -818,7 +818,20 @@ app.get('/problem-stats', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/upcoming', async (req, res) => {
+  try {
+    const upcomingContests = await Contest.find({
+      startTime: { $gt: new Date() }
+    })
+    .sort({ startTime: 1 })
+    .limit(3)
+    .select('contestName startTime duration');
 
+    res.json(upcomingContests);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching upcoming contests', error: error.message });
+  }
+});
 
 
 app.listen(2000, () => {
