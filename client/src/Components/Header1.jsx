@@ -9,7 +9,7 @@ import { SearchIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/image.png'; // Make sure to update this path
+import logo from '../assets/image.png';
 
 const dsaTopics = [
   'Arrays', 'Linked Lists', 'Stacks', 'Queues', 'Trees',
@@ -45,52 +45,15 @@ const dsaTopics = [
     <Box bg={bgColor} px={4} boxShadow="sm">
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <HStack spacing={4} flex={1}>
-          <Circle size="40px" bg="teal.500" color="white">
-            <Image src={logo} alt="Logo" boxSize="30px" />
+        <Circle color="white">
+            <Image src={logo} alt="Logo" boxSize="40px" />
           </Circle>
           <Text fontSize={["xl", "2xl"]} fontWeight="bold" color="teal.500" display={["none", "block"]}>
             AlgoBug
           </Text>
-          <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
-            <PopoverTrigger>
-              <Input
-                placeholder="Search DSA topics"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={onOpen}
-                width={["100%", "200px", "300px"]}
-              />
-            </PopoverTrigger>
-            <PopoverContent>
-              <PopoverBody>
-                <Box maxH="200px" overflowY="auto">
-                  {dsaTopics
-                    .filter(topic => topic.toLowerCase().includes(searchTerm.toLowerCase()))
-                    .map(topic => (
-                      <Button key={topic} variant="ghost" justifyContent="start" width="100%">
-                        {topic}
-                      </Button>
-                    ))
-                  }
-                </Box>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-          <IconButton
-            aria-label="Search database"
-            icon={<SearchIcon />}
-            onClick={handleSearch}
-            size="sm"
-          />
-        </HStack>
+       </HStack>
 
-        <HStack spacing={[2, 4]} flex={1} justifyContent="center">
-          
-          <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
-          <Button variant="ghost" size={["sm", "md"]} display={["none", "inline-flex"]}>Weekly Assignments</Button>
-          <Button variant="ghost" size={["sm", "md"]}>Contests</Button>
-        </HStack>
-
+        
         <HStack spacing={4} flex={1} justifyContent="flex-end">
           
           <Button

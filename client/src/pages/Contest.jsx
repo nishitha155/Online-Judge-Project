@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -22,7 +22,7 @@ import Cookies from 'js-cookie';
 const authToken = Cookies.get('authToken');
 
 const ContestTable = ({ contests, isPast, isCurrent, onRegister, onParticipate }) => {
-  const navigate = useNavigate();
+  
 
   return (
     <Table variant="simple">

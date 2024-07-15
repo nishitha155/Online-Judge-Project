@@ -15,6 +15,8 @@ import googleImage from '../assets/back4.jpg';
 import google from '../assets/back8.webp';
 import top150 from '../assets/back5.jpg';
 import dp from '../assets/back6.png';
+import { useNavigate } from 'react-router-dom';
+import { Footer } from '../Components/Footer';
 
 export const HomeBeforeLogin = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
@@ -31,7 +33,10 @@ export const HomeBeforeLogin = () => {
   const handleUnlock = (assignment) => {
     toast.info(`Unlocking ${assignment}`);
   };
-
+  const handleLogin = () => {
+    navigate('/user/login');
+  };
+  const navigate = useNavigate(); 
   return (
     <>
       <Header1/>
@@ -54,13 +59,14 @@ export const HomeBeforeLogin = () => {
                 borderRadius="lg"
                 overflow="hidden"
                 boxShadow="md"
+                onClick={handleLogin}
                 bg={boxBgColor}
               >
                 <Flex p={4}>
                   <Image src={plan.image} alt={plan.title} boxSize="80px" objectFit="cover" mr={4} />
                   <VStack align="stretch" spacing={3} flex={1}>
                     <Text fontWeight="bold" fontSize="lg">{plan.title}</Text>
-                    <Button colorScheme="teal" onClick={() => handleStartSolving(plan.title)}>
+                    <Button colorScheme="teal">
                       Start Solving
                     </Button>
                   </VStack>
@@ -80,7 +86,7 @@ export const HomeBeforeLogin = () => {
                   <Th>Contest Name</Th>
                   <Th>Date</Th>
                   <Th>Time</Th>
-                  <Th>Register</Th>
+                  
                 </Tr>
               </Thead>
               <Tbody>
@@ -94,14 +100,7 @@ export const HomeBeforeLogin = () => {
                     <Td>{contest.date}</Td>
                     <Td>{contest.time}</Td>
                     <Td>
-                      <Button 
-                        size="sm" 
-                        colorScheme="green" 
-                        onClick={() => handleRegister(contest.name)}
-                        _hover={{ bg: 'green.600' }}
-                      >
-                        Register
-                      </Button>
+                      
                     </Td>
                   </Tr>
                 ))}
@@ -110,7 +109,7 @@ export const HomeBeforeLogin = () => {
           </Box>
 
           <Box textAlign="center" mb={12}>
-            <Button colorScheme="blue">View All</Button>
+            <Button colorScheme="blue" onClick={handleLogin}>View All</Button>
           </Box>
 
           <Heading textAlign="center" mb={6} fontSize="2xl">
@@ -119,9 +118,9 @@ export const HomeBeforeLogin = () => {
 
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6} mb={8}>
             {[
-              { name: 'Assignment 1', streak: 7, image: interviewImage },
-              { name: 'Assignment 2', streak: 14, image: dpImage },
-              { name: 'Assignment 3', streak: 21, image: amazonImage },
+              { name: 'Assignment 1',  image: interviewImage },
+              { name: 'Assignment 2',  image: dpImage },
+              { name: 'Assignment 3',  image: amazonImage },
             ].map((assignment, index) => (
               <Box
                 key={index}
@@ -135,23 +134,24 @@ export const HomeBeforeLogin = () => {
                 backgroundPosition="center"
               >
                 <Heading size="md" mb={4}>{assignment.name}</Heading>
-                <Text mb={4}>Unlock by maintaining a continuous streak of {assignment.streak}</Text>
+                
                 <Button 
                   colorScheme="green" 
-                  onClick={() => handleUnlock(assignment.name)}
-                  leftIcon={<LockIcon />}
+                  onClick={handleLogin}
+                  
                 >
-                  Unlock Now
+                 Start Solving
                 </Button>
               </Box>
             ))}
           </SimpleGrid>
 
           <Box textAlign="center">
-            <Button colorScheme="blue">View All Offers</Button>
+            <Button colorScheme="blue" onClick={handleLogin}>View All</Button>
           </Box>
         </Container>
       </Box>
+      <Footer />
     </>
   );
 };
