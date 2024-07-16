@@ -41,6 +41,9 @@ import { useStreakContext } from '../pages/StreakContest.jsx';
            <Link to="/userproblems">
           <Button variant="ghost" size={["sm", "md"]}>Practice</Button>
           </Link>
+           <Link to="/assignments">
+          <Button variant="ghost" size={["sm", "md"]}>Assignments</Button>
+          </Link>
           
           <Link to="/contest">
           <Button variant="ghost" size={["sm", "md"]}>Contests</Button>
