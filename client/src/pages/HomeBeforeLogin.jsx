@@ -43,17 +43,7 @@ export const HomeBeforeLogin = () => {
     navigate('/user/login');
   };
 
-  const handleStartSolving = (plan) => {
-    toast.info(`Starting ${plan}`);
-  };
-
-  const handleRegister = (contest) => {
-    toast.success(`Registered for ${contest}`);
-  };
-
-  const handleUnlock = (assignment) => {
-    toast.info(`Unlocking ${assignment}`);
-  };
+ 
 
   return (
     <>

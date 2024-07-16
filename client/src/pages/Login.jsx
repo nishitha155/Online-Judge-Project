@@ -13,7 +13,7 @@ import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
 import Header1 from '../Components/Header1';
 import Cookies from 'js-cookie'
-
+import { Link } from 'react-router-dom';
 
 axios.defaults.baseURL = 'https://algobug.onrender.com';
 
@@ -192,23 +192,17 @@ export const Login = () => {
                 </VStack>
                 <VStack>
                   
-                    <HStack spacing={4}>
-                    <Box textAlign="center" mt={4}>
-                    <Text mb={2}>Or sign up with</Text>
-                    <Button leftIcon={<FcGoogle fontSize="24px" />} variant="outline" onClick={loginwithgoogle}>
-                      Sign up with Google
-                    </Button>
-                  </Box>
-                      
-                    </HStack>
+                    
                   </VStack>
               </form>
             </Box>
             <Box w="30%" backgroundImage={`url(${signupImage})`} backgroundSize="cover" backgroundPosition="center" position="relative">
               <Box position="absolute" bottom="60" left="50%" transform="translateX(-50%)" textAlign="center" color="white">
                 <Text fontSize="3xl" fontWeight="bold">New Here?</Text>
-                <Text mt={2}>Signup and discover great opportunities</Text>
+                <Text mt={2}>Signup and discover great opportunities</Text>\
+                <Link to="/user/signup">
                 <Button mt={4} colorScheme="whiteAlpha" variant="outline">Signup</Button>
+                </Link>
               </Box>
             </Box>
           </Flex>

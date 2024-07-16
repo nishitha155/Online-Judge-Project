@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import {
   Box, Heading, SimpleGrid, Image, Button, Table, Thead, Tbody, Tr, Th, Td,
   VStack, Text, Container, useColorModeValue, Flex, HStack
@@ -15,10 +15,11 @@ import googleImage from '../assets/back4.jpg';
 import google from '../assets/back8.webp';
 import top150 from '../assets/back5.jpg';
 import dp from '../assets/back6.png';
-
+import axios from 'axios';
 export const Home = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const boxBgColor = useColorModeValue('white', 'gray.700');
+  const [upcomingContests, setUpcomingContests] = useState([]);
 
   const handleStartSolving = (plan) => {
     toast.info(`Starting ${plan}`);
@@ -32,6 +33,20 @@ export const Home = () => {
     toast.info(`Unlocking ${assignment}`);
   };
 
+  useEffect(() => {
+    const fetchUpcomingContests = async () => {
+      try {
+        const response = await axios.get('https://algobug.onrender.com/upcoming');
+        setUpcomingContests(response.data);
+      } catch (error) {
+        console.error('Error fetching upcoming contests:', error);
+        toast.error('Failed to fetch upcoming contests');
+      }
+    };
+
+    fetchUpcomingContests();
+  }, []);
+
   return (
     <>
       <Navbar/>
@@ -42,24 +57,26 @@ export const Home = () => {
             Featured Plans
           </Heading>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={400} mb={5}>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={12}>
             {[
               { title: 'Top 150 Interview Questions', image: top150 },
               { title: 'Master Dynamic Programming', image: dp },
-             
+              { title: "Amazon's Most Frequent Questions", image: amazon },
+              { title: "Google's Most Frequent Questions", image: google },
             ].map((plan, index) => (
               <Box
                 key={index}
                 borderRadius="lg"
                 overflow="hidden"
                 boxShadow="md"
+                
                 bg={boxBgColor}
               >
                 <Flex p={4}>
                   <Image src={plan.image} alt={plan.title} boxSize="80px" objectFit="cover" mr={4} />
                   <VStack align="stretch" spacing={3} flex={1}>
                     <Text fontWeight="bold" fontSize="lg">{plan.title}</Text>
-                    <Button colorScheme="teal" onClick={() => handleStartSolving(plan.title)}>
+                    <Button colorScheme="teal">
                       Start Solving
                     </Button>
                   </VStack>
@@ -83,25 +100,12 @@ export const Home = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {[
-                  { name: 'Weekly Contest 1', date: '2023-07-01', time: '20:00 IST' },
-                  { name: 'Biweekly Contest 1', date: '2023-07-08', time: '14:00 IST' },
-                  { name: 'Special Contest', date: '2023-07-15', time: '18:00 IST' },
-                ].map((contest, index) => (
+                {upcomingContests.map((contest, index) => (
                   <Tr key={index}>
-                    <Td>{contest.name}</Td>
-                    <Td>{contest.date}</Td>
-                    <Td>{contest.time}</Td>
-                    <Td>
-                      <Button 
-                        size="sm" 
-                        colorScheme="green" 
-                        onClick={() => handleRegister(contest.name)}
-                        _hover={{ bg: 'green.600' }}
-                      >
-                        Register
-                      </Button>
-                    </Td>
+                    <Td>{contest.contestName}</Td>
+                    <Td>{new Date(contest.startTime).toLocaleDateString()}</Td>
+                    <Td>{new Date(contest.startTime).toLocaleTimeString()}</Td>
+                    <Td>{contest.duration} minutes</Td>
                   </Tr>
                 ))}
               </Tbody>
