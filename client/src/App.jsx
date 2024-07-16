@@ -1,5 +1,8 @@
-
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import image from './assets/image.png'; // Adjust the path if necessary
+
 import { Signup } from './pages/Signup';
 import { Home } from './pages/Home';
 import { HomeBeforeLogin } from './pages/HomeBeforeLogin';
@@ -14,21 +17,21 @@ import AllProblems from './pages/AllProblems';
 import AddTestCase from './pages/AddTestCase';
 import UpdateProblem from './pages/UpdateProblem';
 import { UserProblems } from './pages/UserProblems';
-
 import ProblemSolve from './pages/Editor';
 import CreateContest from './pages/CreateContest';
 import ContestAttempt from './pages/ContestAttempt';
 import ContestEditor from './pages/ContestEditor';
 
 function App() {
-
   return (
     <>
+      <Helmet>
+        <link rel="icon" type="image/png" href={image} />
+      </Helmet>
       <Routes>
         <Route path="/user/signup" element={<Signup />} />
         <Route path="/verify" element={<Verification />} />
         <Route path="/user/login" element={<Login />} />
-        
         <Route path="/" element={<HomeBeforeLogin />} />
         <Route path="/home" element={<Home />} />
         <Route path="/contest" element={<Contest />} />
@@ -40,14 +43,13 @@ function App() {
         <Route path="/add" element={<AddQuestion />} />
         <Route path="/problems" element={<AllProblems />} />
         <Route path="/problems/:id/solve" element={<ProblemSolve />} />
-        <Route path="/userproblems" element={<UserProblems/>} />
+        <Route path="/userproblems" element={<UserProblems />} />
         <Route path="/problems/:problemId/add-testcase" element={<AddTestCase />} />
         <Route path="/problems/:problemId/update" element={<UpdateProblem />} />
         <Route path="/contest/:contestId/problem/:problemId" element={<ContestEditor />} />
-     
-    </Routes>
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
