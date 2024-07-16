@@ -11,7 +11,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import signupImage from './signup-background.jpg';
 import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
-import Header from '../Components/Header';
+import Header1 from '../Components/Header1';
 import Cookies from 'js-cookie'
 
 
@@ -145,7 +145,7 @@ export const Login = () => {
 
   return (
     <>
-    <Header/>
+    <Header1/>
       <Flex h="90vh" align="center" justify="center">
         <Box w="100%" bg="white" boxShadow="xl" rounded="lg" overflow="hidden">
           <Flex h="87vh">

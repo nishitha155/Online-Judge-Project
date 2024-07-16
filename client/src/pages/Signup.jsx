@@ -7,7 +7,7 @@ import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from '../Components/Header';
+import Header1 from '../Components/Header1';
 import signupImage from './signup-background.jpg';
 import logo from '../assets/image.png';
 import { useNavigate } from 'react-router-dom';
@@ -142,7 +142,7 @@ export const Signup = () => {
 
   return (
     <>
-    <Header />
+    <Header1 />
       <Flex h="90vh" align="center" justify="center">
         <Box w="100%" bg="white" boxShadow="xl" rounded="lg" overflow="hidden">
           <Flex h="90vh">
