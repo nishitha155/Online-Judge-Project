@@ -22,6 +22,7 @@ import CreateContest from './pages/CreateContest';
 import ContestAttempt from './pages/ContestAttempt';
 import ContestEditor from './pages/ContestEditor';
 import { Assignments } from './pages/Assignments';
+import SubmissionsPage from './pages/SubmissionsPage';
 function App() {
   return (
     <>
@@ -43,6 +44,7 @@ function App() {
         <Route path="/password" element={<ChangePassword />} />
         <Route path="/add" element={<AddQuestion />} />
         <Route path="/problems" element={<AllProblems />} />
+        <Route path="/submissions" element={<SubmissionsPage />} />
         <Route path="/problems/:id/solve" element={<ProblemSolve />} />
         <Route path="/userproblems" element={<UserProblems />} />
         <Route path="/problems/:problemId/add-testcase" element={<AddTestCase />} />
