@@ -839,7 +839,7 @@ app.get('/api/submissions', async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const submissions = await Submission.find({ userId: req.user._id })
+    const submissions = await Submission.find({ userId: req.user.userId })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
