@@ -845,7 +845,7 @@ app.get('/api/submissions', async (req, res) => {
       .limit(limit)
       .populate('problemId', 'title');
 
-    const total = await Submission.countDocuments({ userId: req.user._id });
+    const total = await Submission.countDocuments({ userId: req.user.userId });
 
     res.json({
       submissions,
