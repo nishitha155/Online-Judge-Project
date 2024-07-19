@@ -116,7 +116,7 @@ export const Dashboard = () => {
 
   const getSubmissionData = async () => {
     try {
-      const response = await fetch('https://algobug.onrender.com/api/user-submissions', {
+      const response = await fetch('https://algobug.onrender.com/user-submissions', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

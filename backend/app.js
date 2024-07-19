@@ -833,8 +833,9 @@ app.get('/upcoming', async (req, res) => {
   }
 });
 
-app.get('/api/submissions', async (req, res) => {
+app.get('/api/submissions',authenticateToken, async (req, res) => {
   try {
+    console.log('hi');
     const userId = req.user.userId;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
