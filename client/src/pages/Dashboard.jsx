@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Box, Container, VStack, Text, Button, Avatar, Heading, 
   Table, Thead, Tbody, Tr, Th, Td, useColorModeValue, SimpleGrid, 
@@ -6,33 +7,14 @@ import {
   Grid, GridItem, Modal, ModalOverlay, ModalContent, ModalHeader, 
   ModalFooter, ModalBody, ModalCloseButton, Input, useDisclosure,
   AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader,
-  AlertDialogContent, AlertDialogOverlay,
+  AlertDialogContent, AlertDialogOverlay, Code
 } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { toast } from 'react-toastify';
-
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import Navbar from '../Components/Navbar';
-import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
-
-const pastContests = [
-  { name: 'Weekly Contest 300', date: '2024-06-15', time: '20:00 UTC', rank: 245 },
-  { name: 'Biweekly Contest 150', date: '2024-06-01', time: '14:00 UTC', rank: 189 },
-  { name: 'Weekly Contest 299', date: '2024-05-22', time: '20:00 UTC', rank: 312 },
-  { name: 'Weekly Contest 298', date: '2024-05-15', time: '20:00 UTC', rank: 278 },
-  { name: 'Biweekly Contest 149', date: '2024-05-08', time: '14:00 UTC', rank: 201 },
-];
-
-const submissions = [
-  { title: 'Two Sum', date: '2024-06-20', status: 'Accepted' },
-  { title: 'Reverse Linked List', date: '2024-06-19', status: 'Time Limit Exceeded' },
-  { title: 'Binary Tree Inorder Traversal', date: '2024-06-18', status: 'Accepted' },
-  { title: 'Merge Two Sorted Lists', date: '2024-06-17', status: 'Wrong Answer' },
-  { title: 'Valid Parentheses', date: '2024-06-16', status: 'Accepted' },
-];
 
 export const Dashboard = () => {
   const [user, setUser] = useState({});
@@ -45,6 +27,9 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const [problemStats, setProblemStats] = useState(null);
   const [submissionData, setSubmissionData] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  const [selectedCode, setSelectedCode] = useState('');
+  const { isOpen: isCodeOpen, onOpen: onCodeOpen, onClose: onCodeClose } = useDisclosure();
 
   const authToken = Cookies.get('authToken');
 
@@ -153,20 +138,48 @@ export const Dashboard = () => {
     }
   };
 
+  const fetchSubmissions = async () => {
+    try {
+      const response = await fetch('https://algobug.onrender.com/api/submissions?limit=5', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch submissions');
+      }
+
+      const data = await response.json();
+      setSubmissions(data.submissions);
+    } catch (error) {
+      console.error('Error fetching submissions:', error);
+      toast.error('Failed to fetch submissions');
+    }
+  };
+
   useEffect(() => {
     if (authToken) {
       getUserDetails();
       getProblemStats();
       getSubmissionData();
+      fetchSubmissions();
     }
   }, [authToken]);
+
+  const handleViewCode = (code) => {
+    setSelectedCode(code);
+    onCodeOpen();
+  };
 
   return (
     <>
       <Navbar />
       <Container maxW="container.xl" py={8}>
         <Grid templateColumns={{ base: "1fr", md: "30% 70%" }} gap={8}>
-          {/* 30% Column */}
           <GridItem>
             <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
               <VStack spacing={6} align="center">
@@ -189,10 +202,8 @@ export const Dashboard = () => {
             </Box>
           </GridItem>
 
-          {/* 70% Column */}
           <GridItem>
             <VStack spacing={8}>
-              {/* Problem Solving Stats */}
               <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" width="100%">
                 <Heading size="md" mb={4}>Problem Solving Stats</Heading>
                 {problemStats ? (
@@ -221,7 +232,6 @@ export const Dashboard = () => {
                 )}
               </Box>
 
-              {/* Coding Streak Calendar */}
               <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" width="100%">
                 <Heading size="md" mb={4}>Coding Streak</Heading>
                 <CalendarHeatmap
@@ -246,66 +256,48 @@ export const Dashboard = () => {
           </GridItem>
         </Grid>
 
-        {/* Past Contests and Submissions */}
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={8} mt={8}>
-          <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
-            <Heading size="md" mb={4}>Past Contests</Heading>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Contest</Th>
-                  <Th>Date</Th>
-                  <Th>Time</Th>
-                  <Th>Rank</Th>
+        <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" mt={8}>
+          <Heading size="md" mb={4}>Previous Submissions</Heading>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Problem</Th>
+                <Th>Date</Th>
+                <Th>Status</Th>
+                <Th>Action</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {submissions.map((submission) => (
+                <Tr key={submission._id}>
+                  <Td>{submission.problemId.title}</Td>
+                  <Td>{new Date(submission.createdAt).toLocaleDateString()}</Td>
+                  <Td>
+                    <Text color={submission.status === 'Accepted' ? 'green.500' : 'red.500'}>
+                      {submission.status}
+                    </Text>
+                  </Td>
+                  <Td>
+                    <Button size="sm" onClick={() => handleViewCode(submission.code)}>
+                      View Code
+                    </Button>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {pastContests.map((contest, index) => (
-                  <Tr key={index}>
-                    <Td>{contest.name}</Td>
-                    <Td>{contest.date}</Td>
-                    <Td>{contest.time}</Td>
-                    <Td>{contest.rank}</Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-            <Button rightIcon={<ChevronRightIcon />} colorScheme="blue" variant="link" mt={2}>
-              View More
-            </Button>
-          </Box>
-          <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
-            <Heading size="md" mb={4}>Previous Submissions</Heading>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Problem</Th>
-                  <Th>Date</Th>
-                  <Th>Status</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {submissions.map((submission, index) => (
-                  <Tr key={index}>
-                    <Td>{submission.title}</Td>
-                    <Td>{submission.date}</Td>
-                    <Td>
-                      <Text color={submission.status === 'Accepted' ? 'green.500' : 'red.500'}>
-                        {submission.status}
-                      </Text>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-            <Button rightIcon={<ChevronRightIcon />} colorScheme="blue" variant="link" mt={2}>
-              View More
-            </Button>
-          </Box>
-        </SimpleGrid>
+              ))}
+            </Tbody>
+          </Table>
+          <Button
+            rightIcon={<ChevronRightIcon />}
+            colorScheme="blue"
+            variant="link"
+            mt={2}
+            onClick={() => navigate('/submissions')}
+          >
+            View More
+          </Button>
+        </Box>
       </Container>
 
-      {/* Delete Account Modal */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -337,7 +329,6 @@ export const Dashboard = () => {
         </ModalContent>
       </Modal>
 
-      {/* Delete Account Confirmation Alert */}
       <AlertDialog
         isOpen={isAlertOpen}
         leastDestructiveRef={cancelRef}
@@ -362,6 +353,22 @@ export const Dashboard = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      <Modal isOpen={isCodeOpen} onClose={onCodeClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Submission Code</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Code whiteSpace="pre-wrap">{selectedCode}</Code>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onCodeClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

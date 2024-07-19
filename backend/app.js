@@ -833,6 +833,31 @@ app.get('/upcoming', async (req, res) => {
   }
 });
 
+app.get('/api/submissions', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const submissions = await Submission.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('problemId', 'title');
+
+    const total = await Submission.countDocuments({ userId: req.user._id });
+
+    res.json({
+      submissions,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      total
+    });
+  } catch (error) {
+    res.status(400).json({ message: 'Error fetching submissions', error: error.message });
+  }
+});
+
 
 app.listen(2000, () => {
     console.log('Server is running on port 2000');
