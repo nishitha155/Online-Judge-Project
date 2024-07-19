@@ -15,6 +15,7 @@ import googleImage from '../assets/back4.jpg';
 import google from '../assets/back8.webp';
 import top150 from '../assets/back5.jpg';
 import dp from '../assets/back6.png';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 export const Home = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
@@ -113,7 +114,9 @@ export const Home = () => {
           </Box>
 
           <Box textAlign="center" mb={12}>
+          <Link to="/contests">
             <Button colorScheme="blue">View All</Button>
+            </Link>
           </Box>
 
           <Heading textAlign="center" mb={6} fontSize="2xl">
@@ -138,20 +141,21 @@ export const Home = () => {
                 backgroundPosition="center"
               >
                 <Heading size="md" mb={4}>{assignment.name}</Heading>
-                <Text mb={4}>Unlock by maintaining a continuous streak of {assignment.streak}</Text>
+                
                 <Button 
                   colorScheme="green" 
-                  onClick={() => handleUnlock(assignment.name)}
-                  leftIcon={<LockIcon />}
+                  
                 >
-                  Unlock Now
+                  Start Solving
                 </Button>
               </Box>
             ))}
           </SimpleGrid>
 
           <Box textAlign="center">
-            <Button colorScheme="blue">View All Offers</Button>
+          <Link to="/assignments">
+            <Button colorScheme="blue">View All</Button>
+            </Link>
           </Box>
         </Container>
       </Box>

@@ -22,14 +22,14 @@ import bg5 from '../assets/back9.jpg';
 // ... import more background images as needed
 
 const assignments = [
-  { id: 1, title: 'Assignment 1',  image: bg1 },
-  { id: 2, title: 'Assignment 2',  image: bg2 },
-  { id: 3, title: 'Assignment 3',  image: bg3 },
-  { id: 4, title: 'Assignment 4',  image: bg4 },
-  { id: 5, title: 'Assignment 5',  image: bg5 },
+  { id: 1, title: 'Assignment 1',topic:'Arrays',  image: bg1 },
+  { id: 2, title: 'Assignment 2',topic:'Arrays',  image: bg2 },
+  { id: 3, title: 'Assignment 3',topic:'Dynammic Programming',  image: bg3 },
+  { id: 4, title: 'Assignment 4',topic:'Graphs',  image: bg4 },
+  { id: 5, title: 'Assignment 5',topic:'Tries',  image: bg5 },
 ];
 
-const AssignmentBox = ({ title, streak, image }) => {
+const AssignmentBox = ({ title, topic, image }) => {
   const bgOverlay = useColorModeValue('rgba(255, 255, 255, 0.8)', 'rgba(0, 0, 0, 0.8)');
   
   const handleUnlock = () => {
