@@ -14,6 +14,11 @@
 - Install dependencies: `npm install`
 - Run the server: `npm start`
 
+## Compiler
+- Navigate to the compiler directory: `cd compiler`
+- Install dependencies: `npm install`
+- Run the server: `nodemon index.js`
+
 
 
 
